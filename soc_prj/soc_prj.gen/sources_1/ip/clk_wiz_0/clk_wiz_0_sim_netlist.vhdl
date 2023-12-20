@@ -2,10 +2,10 @@
 -- Copyright 2022-2023 Advanced Micro Devices, Inc. All Rights Reserved.
 -- --------------------------------------------------------------------------------
 -- Tool Version: Vivado v.2023.1 (win64) Build 3865809 Sun May  7 15:05:29 MDT 2023
--- Date        : Mon Sep 25 16:43:51 2023
--- Host        : naive_1109 running 64-bit major release  (build 9200)
+-- Date        : Wed Dec 20 22:38:59 2023
+-- Host        : y7000pr running 64-bit major release  (build 9200)
 -- Command     : write_vhdl -force -mode funcsim
---               d:/HDU_TZH/ADC2/spi_ad9516_vio_adc2_test_ok/soc_prj/soc_prj.gen/sources_1/ip/clk_wiz_0/clk_wiz_0_sim_netlist.vhdl
+--               e:/github/fpga_project/PLL_ADC_USB/soc_prj/soc_prj.gen/sources_1/ip/clk_wiz_0/clk_wiz_0_sim_netlist.vhdl
 -- Design      : clk_wiz_0
 -- Purpose     : This VHDL netlist is a functional simulation representation of the design and should not be modified or
 --               synthesized. This netlist cannot be used for SDF annotated simulation.

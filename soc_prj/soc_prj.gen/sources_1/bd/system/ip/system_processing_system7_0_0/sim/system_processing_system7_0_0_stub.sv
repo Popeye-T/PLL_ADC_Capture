@@ -1,21 +1,21 @@
-// (c) Copyright 1995-2023 Xilinx, Inc. All rights reserved.
+// (c) Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+// (c) Copyright 2022-2023 Advanced Micro Devices, Inc. All rights reserved.
 // 
 // This file contains confidential and proprietary information
-// of Xilinx, Inc. and is protected under U.S. and
-// international copyright and other intellectual property
-// laws.
+// of AMD and is protected under U.S. and international copyright
+// and other intellectual property laws.
 // 
 // DISCLAIMER
 // This disclaimer is not a license and does not grant any
 // rights to the materials distributed herewith. Except as
 // otherwise provided in a valid license issued to you by
-// Xilinx, and to the maximum extent permitted by applicable
+// AMD, and to the maximum extent permitted by applicable
 // law: (1) THESE MATERIALS ARE MADE AVAILABLE "AS IS" AND
 // WITH ALL FAULTS, AND XILINX HEREBY DISCLAIMS ALL WARRANTIES
 // AND CONDITIONS, EXPRESS, IMPLIED, OR STATUTORY, INCLUDING
 // BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, NON-
 // INFRINGEMENT, OR FITNESS FOR ANY PARTICULAR PURPOSE; and
-// (2) Xilinx shall not be liable (whether in contract or tort,
+// (2) AMD shall not be liable (whether in contract or tort,
 // including negligence, or under any other theory of
 // liability) for any loss or damage of any kind or nature
 // related to, arising under or in connection with these
@@ -24,11 +24,11 @@
 // (including loss of data, profits, goodwill, or any type of
 // loss or damage suffered as a result of any action brought
 // by a third party) even if such damage or loss was
-// reasonably foreseeable or Xilinx had been advised of the
+// reasonably foreseeable or AMD had been advised of the
 // possibility of the same.
 // 
 // CRITICAL APPLICATIONS
-// Xilinx products are not designed or intended to be fail-
+// AMD products are not designed or intended to be fail-
 // safe, or for use in any application requiring fail-safe
 // performance, such as life-support or safety devices or
 // systems, Class III medical devices, nuclear facilities,
@@ -37,7 +37,7 @@
 // injury, or severe property or environmental damage
 // (individually and collectively, "Critical
 // Applications"). Customer assumes the sole risk and
-// liability of any use of Xilinx products in Critical
+// liability of any use of AMD products in Critical
 // Applications, subject only to applicable laws and
 // regulations governing limitations on product liability.
 // 
@@ -53,7 +53,6 @@
 //
 //   Vivado Simulator (XSim)
 //   Cadence Xcelium Simulator
-//   Aldec Riviera-PRO Simulator
 //
 //------------------------------------------------------------------------------------
 `timescale 1ps/1ps
@@ -100,36 +99,6 @@ endmodule
 module system_processing_system7_0_0 (GPIO_I,GPIO_O,GPIO_T,MIO,DDR_CAS_n,DDR_CKE,DDR_Clk_n,DDR_Clk,DDR_CS_n,DDR_DRSTB,DDR_ODT,DDR_RAS_n,DDR_WEB,DDR_BankAddr,DDR_Addr,DDR_VRN,DDR_VRP,DDR_DM,DDR_DQ,DDR_DQS_n,DDR_DQS,PS_SRSTB,PS_CLK,PS_PORB)
 (* integer foreign = "SystemC";
 *);
-  input bit [3 : 0] GPIO_I;
-  output wire [3 : 0] GPIO_O;
-  output wire [3 : 0] GPIO_T;
-  inout wire [53 : 0] MIO;
-  inout wire DDR_CAS_n;
-  inout wire DDR_CKE;
-  inout wire DDR_Clk_n;
-  inout wire DDR_Clk;
-  inout wire DDR_CS_n;
-  inout wire DDR_DRSTB;
-  inout wire DDR_ODT;
-  inout wire DDR_RAS_n;
-  inout wire DDR_WEB;
-  inout wire [2 : 0] DDR_BankAddr;
-  inout wire [14 : 0] DDR_Addr;
-  inout wire DDR_VRN;
-  inout wire DDR_VRP;
-  inout wire [3 : 0] DDR_DM;
-  inout wire [31 : 0] DDR_DQ;
-  inout wire [3 : 0] DDR_DQS_n;
-  inout wire [3 : 0] DDR_DQS;
-  inout wire PS_SRSTB;
-  inout wire PS_CLK;
-  inout wire PS_PORB;
-endmodule
-`endif
-
-`ifdef RIVIERA
-(* SC_MODULE_EXPORT *)
-module system_processing_system7_0_0 (GPIO_I,GPIO_O,GPIO_T,MIO,DDR_CAS_n,DDR_CKE,DDR_Clk_n,DDR_Clk,DDR_CS_n,DDR_DRSTB,DDR_ODT,DDR_RAS_n,DDR_WEB,DDR_BankAddr,DDR_Addr,DDR_VRN,DDR_VRP,DDR_DM,DDR_DQ,DDR_DQS_n,DDR_DQS,PS_SRSTB,PS_CLK,PS_PORB)
   input bit [3 : 0] GPIO_I;
   output wire [3 : 0] GPIO_O;
   output wire [3 : 0] GPIO_T;

@@ -1,10 +1,11 @@
--- Copyright 1986-2021 Xilinx, Inc. All Rights Reserved.
+-- Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+-- Copyright 2022-2023 Advanced Micro Devices, Inc. All Rights Reserved.
 -- --------------------------------------------------------------------------------
--- Tool Version: Vivado v.2021.2 (win64) Build 3367213 Tue Oct 19 02:48:09 MDT 2021
--- Date        : Sun Aug 20 12:50:44 2023
--- Host        : naive_1109 running 64-bit major release  (build 9200)
+-- Tool Version: Vivado v.2023.1 (win64) Build 3865809 Sun May  7 15:05:29 MDT 2023
+-- Date        : Wed Dec 20 22:39:01 2023
+-- Host        : y7000pr running 64-bit major release  (build 9200)
 -- Command     : write_vhdl -force -mode funcsim
---               d:/HDU_TZH/EMIO/spi_ad9516/soc_prj/soc_prj.gen/sources_1/bd/system/ip/system_processing_system7_0_0/system_processing_system7_0_0_sim_netlist.vhdl
+--               e:/github/fpga_project/PLL_ADC_USB/soc_prj/soc_prj.gen/sources_1/bd/system/ip/system_processing_system7_0_0/system_processing_system7_0_0_sim_netlist.vhdl
 -- Design      : system_processing_system7_0_0
 -- Purpose     : This VHDL netlist is a functional simulation representation of the design and should not be modified or
 --               synthesized. This netlist cannot be used for SDF annotated simulation.
@@ -5975,7 +5976,7 @@ entity system_processing_system7_0_0 is
   attribute DowngradeIPIdentifiedWarnings : string;
   attribute DowngradeIPIdentifiedWarnings of system_processing_system7_0_0 : entity is "yes";
   attribute X_CORE_INFO : string;
-  attribute X_CORE_INFO of system_processing_system7_0_0 : entity is "processing_system7_v5_5_processing_system7,Vivado 2021.2";
+  attribute X_CORE_INFO of system_processing_system7_0_0 : entity is "processing_system7_v5_5_processing_system7,Vivado 2023.1";
 end system_processing_system7_0_0;
 
 architecture STRUCTURE of system_processing_system7_0_0 is

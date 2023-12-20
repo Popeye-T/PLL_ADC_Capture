@@ -72,11 +72,4 @@ begin
 end
 endgenerate
 
-ila_0 ila_0_inst (
-	.clk(sys_clk), // input wire clk
-	.probe0(adc_data_out), // input wire [13:0]  probe0  
-	.probe1(adc_demux0_data), // input wire [6:0]  probe1 
-	.probe2(adc_demux1_data) // input wire [6:0]  probe1 
-);
-
 endmodule

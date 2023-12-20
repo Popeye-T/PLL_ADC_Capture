@@ -1,10 +1,11 @@
--- Copyright 1986-2021 Xilinx, Inc. All Rights Reserved.
+-- Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+-- Copyright 2022-2023 Advanced Micro Devices, Inc. All Rights Reserved.
 -- --------------------------------------------------------------------------------
--- Tool Version: Vivado v.2021.2 (win64) Build 3367213 Tue Oct 19 02:48:09 MDT 2021
--- Date        : Sun Aug 20 12:50:44 2023
--- Host        : naive_1109 running 64-bit major release  (build 9200)
+-- Tool Version: Vivado v.2023.1 (win64) Build 3865809 Sun May  7 15:05:29 MDT 2023
+-- Date        : Wed Dec 20 22:39:01 2023
+-- Host        : y7000pr running 64-bit major release  (build 9200)
 -- Command     : write_vhdl -force -mode synth_stub
---               d:/HDU_TZH/EMIO/spi_ad9516/soc_prj/soc_prj.gen/sources_1/bd/system/ip/system_processing_system7_0_0/system_processing_system7_0_0_stub.vhdl
+--               e:/github/fpga_project/PLL_ADC_USB/soc_prj/soc_prj.gen/sources_1/bd/system/ip/system_processing_system7_0_0/system_processing_system7_0_0_stub.vhdl
 -- Design      : system_processing_system7_0_0
 -- Purpose     : Stub declaration of top-level module interface
 -- Device      : xc7z015clg485-2
@@ -48,6 +49,6 @@ attribute black_box_pad_pin : string;
 attribute syn_black_box of stub : architecture is true;
 attribute black_box_pad_pin of stub : architecture is "GPIO_I[3:0],GPIO_O[3:0],GPIO_T[3:0],MIO[53:0],DDR_CAS_n,DDR_CKE,DDR_Clk_n,DDR_Clk,DDR_CS_n,DDR_DRSTB,DDR_ODT,DDR_RAS_n,DDR_WEB,DDR_BankAddr[2:0],DDR_Addr[14:0],DDR_VRN,DDR_VRP,DDR_DM[3:0],DDR_DQ[31:0],DDR_DQS_n[3:0],DDR_DQS[3:0],PS_SRSTB,PS_CLK,PS_PORB";
 attribute X_CORE_INFO : string;
-attribute X_CORE_INFO of stub : architecture is "processing_system7_v5_5_processing_system7,Vivado 2021.2";
+attribute X_CORE_INFO of stub : architecture is "processing_system7_v5_5_processing_system7,Vivado 2023.1";
 begin
 end;

@@ -21,27 +21,22 @@
 
 
 module FT601Q(
-// system control
-//input                  Rstn_i,//fpga reset
-//output                 USBSS_EN,//power enable
-// FIFO interface
-input               clk_ila,
-input wire [13:0]           ADC_DATA_IN,
-input                  CLK_i,
-inout [31:0]           DATA_io,
-inout [3:0]            BE_io,
-input                  RXF_N_i,   // ACK_N
-input                  TXE_N_i,
-output reg             OE_N_o,//信号输出使能
-output reg             WR_N_o,    // REQ_N，写使能
-output                 SIWU_N_o,
-output reg             RD_N_o,//读使能
-output                 WAKEUP_o,
-output [1:0]           GPIO_o
-
+    // FIFO interface
+    input               clk_ila,
+    input wire [13:0]           ADC_DATA_IN,
+    input                  CLK_i,
+    inout [31:0]           DATA_io,
+    inout [3:0]            BE_io,
+    input                  RXF_N_i,   // ACK_N
+    input                  TXE_N_i,
+    output reg             OE_N_o,//信号输出使能
+    output reg             WR_N_o,    // REQ_N，写使能
+    output                 SIWU_N_o,
+    output reg             RD_N_o,//读使能
+    output                 WAKEUP_o,
+    output [1:0]           GPIO_o
 );
 
-//assign USBSS_EN = 1'b1;
 assign WAKEUP_o = 1'b1;
 assign GPIO_o   = 2'b00;
 assign SIWU_N_o = 1'b0;
@@ -53,6 +48,7 @@ reg [31:0] wr_data;
 wire [3 :0] BE_RD;
 wire [ 3:0] BE_WR;
 reg [1:0] USB_S;
+reg [7:0]wr_cnt;
 
 //read or write flag
 assign rd_data  =  (USB_S==2'd1) ? DATA_io : 32'd0;//read data dir
@@ -61,9 +57,13 @@ assign BE_RD    =  (USB_S==2'd1) ? BE_io   : 4'd0;
 assign BE_io    =  (USB_S==2'd2) ? BE_WR   : 4'bz;// write data dir
 assign BE_WR    =  4'b1111;
 
-
-reg [7:0]wr_cnt;
-
+Delay_rst #(
+    .num(20'hffff0)
+)Delay_rst_inst(
+    .clk_i(CLK_i),
+    .rstn_i(1),
+    .rst_o(rstn)
+);
 
 always @(posedge CLK_i)begin
     wr_data <= {2'b0,ADC_DATA_IN,2'b0,ADC_DATA_IN};
@@ -116,24 +116,4 @@ always @(posedge CLK_i)begin
         endcase
     end
 end
-
-
-Delay_rst #(
-    .num(20'hffff0)
-)
-Delay_rst_inst
-(
-    .clk_i(CLK_i),
-    .rstn_i(1),
-    .rst_o(rstn)
- );
-ila_3 ila_3_inst (
-	.clk(clk_ila), // input wire clk
-	.probe0(DATA_io), // input wire [13:0]  probe0
-	.probe1(RXF_N_i), // input wire [0:0]  probe1
-	.probe2(TXE_N_i), // input wire [0:0]  probe2
-	.probe3(OE_N_o), // input wire [0:0]  probe3
-	.probe4(WR_N_o), // input wire [0:0]  probe4
-	.probe5(RD_N_o) // input wire [0:0]  probe5
-);
 endmodule
