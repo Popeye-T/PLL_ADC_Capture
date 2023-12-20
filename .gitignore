@@ -1,0 +1,5 @@
+/soc_prj/*
+!/soc_prj/soc_prj.srcs
+!/soc_prj/uisrc
+/soc_sdk/*
+!/soc_sdk/src
