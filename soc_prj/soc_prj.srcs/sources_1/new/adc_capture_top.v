@@ -94,6 +94,7 @@ module adc_capture_top(
 wire I_Trig;
 wire Sys_clk;
 wire clk_200M;
+wire clk_10M;
 wire        adc_clk_ch_1;
 wire [13:0] adc_data_ch_1;
 wire [13:0] ADC1_DATA_USB;
@@ -111,6 +112,7 @@ IBUFDS IBUFDS_Sys_clk(
 clk_wiz_0 clk_wiz_0_inst(
     // Clock out ports
     .clk_out1(clk_200M),     // output clk_out1
+    .clk_out2(clk_10M),
     // Clock in ports
     .clk_in1(Sys_clk)      // input clk_in1
 );
@@ -166,10 +168,9 @@ fifo_generator_0 fifo_generator_0_inst (
     ,   .rd_rst_busy            ()
 );
 
-/*USB3.0接口*/
-FT601Q FT601Q_inst(
-        .clk_ila                (clk_200M           )
-    ,   .ADC_DATA_IN            (ADC1_DATA_USB      )
+ft60x_top u_ft60x_top(
+        .clk_50m                (clk_10M            )
+    // FIFO interface
     ,   .CLK_i                  (CLK_i              )
     ,   .DATA_io                (DATA_io            )
     ,   .BE_io                  (BE_io              )
@@ -182,6 +183,7 @@ FT601Q FT601Q_inst(
     ,   .WAKEUP_o               (WAKEUP_o           )
     ,   .GPIO_o                 (GPIO_o             )
 );
+
 
 system_wrapper u_system_wrapper(
         .DDR_addr               (DDR_addr           )
