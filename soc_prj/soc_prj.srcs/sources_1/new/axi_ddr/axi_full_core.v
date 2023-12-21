@@ -21,12 +21,9 @@
 
 
 module axi_full_core#(
-    	parameter FDW = 32
-    ,	parameter FAW = 8
-
-    ,   parameter FRAME_DELAY = 2 //max 1024
-    ,   parameter PIXELS_HORIZONTAL = 1280
-    ,   parameter PIXELS_VERTICAL = 1024
+		parameter	ADC_SINGLE_BURST_LENGTH = 128 * 128 / 8
+	,	parameter	USB_TOTAL_BURST_LENGTH = 4 * 1024 * 1024
+	,	parameter	USB_SINGLE_BURST_LENGTH = 4 * 1024
 
 		// Base address of targeted slave
 	,   parameter  C_M_TARGET_SLAVE_BASE_ADDR	= 32'h40000000
@@ -183,21 +180,29 @@ module axi_full_core#(
 
 //----------------------------------------------------
 // forward FIFO read interface
-    ,   output  wire           	frd_rdy  
-    ,   input   wire           	frd_vld  
-    ,   input   wire [FDW-1:0] 	frd_din  
-    ,   input   wire           	frd_empty
-    ,   input   wire [FAW:0] 	frd_cnt  
+    ,   output  wire           	frd_en
+    ,   input   wire	[127:0]	frd_data
+    ,   input   wire           	frd_almost_full
 
-// //----------------------------------------------------
-// // backward FIFO write interface
-//     ,   input   wire           	bwr_rdy  
-//     ,   output  reg           	bwr_vld  
-//     ,   output  reg  [FDW-1:0] 	bwr_dat  
-//     ,   input   wire           	bwr_full
-//     ,   input   wire [FAW:0] 	brd_cnt  
+//----------------------------------------------------
+// backward FIFO write interface
+    ,   output  reg            	bwr_en
+    ,   output  reg 	[127:0]	bwr_data
+
+//----------------------------------------------------
+// usb trigger interface
+    ,   input   wire           	usb_burst_trigger
 );
 
+	reg			[1:0]	wr_buffer = 0;
+	reg			[1:0]	rd_buffer = 0-1;
+	reg					usb_burst_trigger_d1;
+	reg					usb_burst_trigger_d2;
+
+	always@(M_AXI_ACLK) begin
+		usb_burst_trigger_d1	<=	usb_burst_trigger;
+		usb_burst_trigger_d2	<=	usb_burst_trigger_d1;
+	end
 
 
 
@@ -286,7 +291,7 @@ module axi_full_core#(
 	//I/O Connections. Write Address (AW)
 	assign M_AXI_AWID	= 'b0;
 	//The AXI address is a concatenation of the target base address + active offset range
-	assign M_AXI_AWADDR	= C_M_TARGET_SLAVE_BASE_ADDR + axi_awaddr;
+	assign M_AXI_AWADDR	= C_M_TARGET_SLAVE_BASE_ADDR + axi_awaddr + wr_buffer * USB_TOTAL_BURST_LENGTH;
 	//Burst LENgth is number of transaction beats, minus 1
 	assign M_AXI_AWLEN	= C_M_AXI_BURST_LEN - 1;
 	//Size should be C_M_AXI_DATA_WIDTH, in 2^SIZE bytes, otherwise narrow bursts are used
@@ -311,7 +316,7 @@ module axi_full_core#(
 	assign M_AXI_BREADY	= axi_bready;
 	//Read Address (AR)
 	assign M_AXI_ARID	= 'b0;
-	assign M_AXI_ARADDR	= C_M_TARGET_SLAVE_BASE_ADDR + axi_araddr;
+	assign M_AXI_ARADDR	= C_M_TARGET_SLAVE_BASE_ADDR + axi_araddr + rd_buffer * USB_TOTAL_BURST_LENGTH;
 	//Burst LENgth is number of transaction beats, minus 1
 	assign M_AXI_ARLEN	= C_M_AXI_BURST_LEN - 1;
 	//Size should be C_M_AXI_DATA_WIDTH, in 2^n bytes, otherwise narrow bursts are used
@@ -330,7 +335,7 @@ module axi_full_core#(
 	//Example design I/O
 	assign TXN_DONE	= compare_done;
 	//Burst size in bytes
-	assign burst_size_bytes	= C_M_AXI_BURST_LEN * C_M_AXI_DATA_WIDTH/8;
+	assign burst_size_bytes	= C_M_AXI_BURST_LEN * C_M_AXI_DATA_WIDTH / 8;
 	assign init_txn_pulse	= (!init_txn_ff2) && init_txn_ff;
 
 
@@ -349,6 +354,8 @@ module axi_full_core#(
 	        init_txn_ff2 <= init_txn_ff;                                                                 
 	      end                                                                      
 	  end     
+
+
 
 
 	//--------------------
@@ -389,13 +396,21 @@ module axi_full_core#(
 			axi_awaddr <= 1'b0;                                             
 		end                                                              
 		else if (M_AXI_AWREADY && axi_awvalid) begin                                                            
-			axi_awaddr <= (axi_awaddr >= (PIXELS_VERTICAL * PIXELS_HORIZONTAL * FRAME_DELAY - C_M_AXI_BURST_LEN * (C_M_AXI_DATA_WIDTH / 8)) - 1) ? 0 : (axi_awaddr + burst_size_bytes);                   
+			axi_awaddr <= (axi_awaddr >= (USB_TOTAL_BURST_LENGTH - C_M_AXI_BURST_LEN * (C_M_AXI_DATA_WIDTH / 8)) - 1) ? 0 : (axi_awaddr + burst_size_bytes);                   
 		end                                                              
 		else begin                                                           
 			axi_awaddr <= axi_awaddr;
 		end                                        
-	end                                                                
-
+	end             
+	                                                   
+	always @(posedge M_AXI_ACLK) begin                                                                
+		if (M_AXI_ARESETN == 0) begin                                                            
+			wr_buffer <= 0;                                             
+		end                                                              
+		else if (M_AXI_AWREADY & axi_awvalid & (axi_awaddr >= (USB_TOTAL_BURST_LENGTH - C_M_AXI_BURST_LEN * (C_M_AXI_DATA_WIDTH / 8)) - 1)) begin                                                            
+			wr_buffer <=  (wr_buffer + 1 == rd_buffer) ? (wr_buffer + 2) : (wr_buffer + 1);                   
+		end                                    
+	end   
 
 	//--------------------
 	//Write Data Channel
@@ -496,17 +511,17 @@ module axi_full_core#(
 		//else if (wnext && axi_wlast)                                                  
 		//  axi_wdata <= 'b0;      
 		else if (M_AXI_AWREADY && axi_awvalid) begin
-			axi_wdata <= frd_din;
+			axi_wdata <= frd_data;
 		end                                                     
 		else if (wnext) begin                                                                 
-			axi_wdata <= frd_din;
+			axi_wdata <= frd_data;
 		end                                                   
 		else begin                                                                           
 			axi_wdata <= axi_wdata;
 		end                                                       
 	end    
 
-	assign	frd_rdy = (!axi_wlast) && ((M_AXI_AWREADY && axi_awvalid) || wnext);                                                   
+	assign	frd_en = (!axi_wlast) && ((M_AXI_AWREADY && axi_awvalid) || wnext);                                                   
 
 
 	//----------------------------
@@ -584,13 +599,21 @@ module axi_full_core#(
 	        axi_araddr <= 'b0;                                           
 		end                                                            
 	    else if (M_AXI_ARREADY && axi_arvalid) begin                                                          
-	    	axi_araddr <= (axi_araddr >= (PIXELS_VERTICAL * PIXELS_HORIZONTAL * FRAME_DELAY - C_M_AXI_BURST_LEN * (C_M_AXI_DATA_WIDTH / 8)) - 1) ? 0 : axi_araddr + burst_size_bytes;
+	    	axi_araddr <= (axi_araddr >= (USB_TOTAL_BURST_LENGTH - C_M_AXI_BURST_LEN * (C_M_AXI_DATA_WIDTH / 8)) - 1) ? 0 : axi_araddr + burst_size_bytes;
 		end                                                            
 	    else begin                                                            
 	      	axi_araddr <= axi_araddr;       
 		end                               
 	end                                                                
-
+	                                                   
+	always @(posedge M_AXI_ACLK) begin                                                                
+		if (M_AXI_ARESETN == 0) begin                                                            
+			rd_buffer <= 0;                                             
+		end                                                              
+		else if (M_AXI_AWREADY & axi_awvalid & (axi_araddr >= (USB_TOTAL_BURST_LENGTH - C_M_AXI_BURST_LEN * (C_M_AXI_DATA_WIDTH / 8)) - 1)) begin                                                            
+			rd_buffer <=  wr_buffer - 1;                   
+		end                                    
+	end   
 
 	//--------------------------------
 	//Read Data (and Response) Channel
@@ -614,20 +637,20 @@ module axi_full_core#(
 		end                                       
 	end
                                 
-	// always @(posedge M_AXI_ACLK) begin                                                                 
-	//     if (M_AXI_ARESETN == 0 || init_txn_pulse == 1'b1) begin
-	//         bwr_vld	<=	0;
-	// 		bwr_dat	<=	0;   	                                  
-	// 	end
-	// 	else if(rnext)begin
-	//         bwr_vld	<=	1;
-	// 		bwr_dat	<=	M_AXI_RDATA;   
-	// 	end
-	// 	else begin
-	//         bwr_vld	<=	0;
-	// 		bwr_dat	<=	0;   	
-	// 	end
-	// end
+	always @(posedge M_AXI_ACLK) begin                                                                 
+	    if (M_AXI_ARESETN == 0 || init_txn_pulse == 1'b1) begin
+			bwr_en		<=	0;
+			bwr_data	<=	0;   	                                  
+		end
+		else if(rnext)begin
+			bwr_en		<=	1;
+			bwr_data	<=	M_AXI_RDATA;   
+		end
+		else begin
+			bwr_en		<=	0;
+			bwr_data	<=	0;   	
+		end
+	end
 
 
 	/*                                                                      
@@ -740,7 +763,7 @@ module axi_full_core#(
 			write_burst_counter <= 'b0;                                                                         
 		end                                                                                                   
 		else if (M_AXI_AWREADY && axi_awvalid) begin                                                                                                 
-			if (write_burst_counter <= (PIXELS_HORIZONTAL*8)/(FDW*C_M_AXI_BURST_LEN)) begin                                                         
+			if (write_burst_counter <= ADC_SINGLE_BURST_LENGTH / burst_size_bytes) begin                                                         
 				write_burst_counter <= write_burst_counter + 1'b1;        
 			end                                  
 		end
@@ -756,7 +779,7 @@ module axi_full_core#(
 			read_burst_counter <= 'b0;                                                                          
 		end                                                                                                   
 		else if (M_AXI_ARREADY && axi_arvalid) begin                                                                                                 
-			if (read_burst_counter <= (PIXELS_HORIZONTAL*8)/(FDW*C_M_AXI_BURST_LEN)) begin
+			if (read_burst_counter <= USB_SINGLE_BURST_LENGTH / burst_size_bytes) begin
 				read_burst_counter <= read_burst_counter + 1'b1;
 			end                                                                                               
 		end                                                                                                   
@@ -783,34 +806,18 @@ module axi_full_core#(
 			// state transition                                                                                 
 			case (mst_exec_state)                                                                               
 																												
-				IDLE_W:                                                                                     
-				// This state is responsible to wait for user defined C_M_START_COUNT                           
-				// number of clock cycles.                                                                      
-				//if ( init_txn_pulse == 1'b1) begin         
-				if(frd_cnt >= (PIXELS_HORIZONTAL*8)/FDW) begin                                                            
+				IDLE_W:
+				if(usb_burst_trigger_d2) begin
+					mst_exec_state  <= INIT_READ;
+				end
+				else if(frd_almost_full) begin                                                            
 					mst_exec_state  <= INIT_WRITE;                                                              
 					ERROR <= 1'b0;
 					compare_done <= 1'b0;
-				end                                                                                           
+				end    
 				else begin                                                                                         
 					mst_exec_state  <= IDLE_W;                                                            
 				end        
-
-				// IDLE_RW:
-				// if(frd_cnt >= (PIXELS_HORIZONTAL*8)/FDW) begin                                                            
-				// 	mst_exec_state  <= INIT_WRITE;                                                              
-				// 	ERROR <= 1'b0;
-				// 	compare_done <= 1'b0;
-				// end
-				// // else if (brd_cnt == 0) begin
-				// else if (brd_cnt <= (PIXELS_HORIZONTAL*8)/FDW - 1) begin
-				// 	mst_exec_state <= INIT_READ;                                                          
-				// 	ERROR <= 1'b0;
-				// 	compare_done <= 1'b0;
-				// end
-				// else begin                                                                                         
-				// 	mst_exec_state  <= IDLE_RW;                                                            
-				// end        
 
 				INIT_WRITE:                                                                                       
 				// This state is responsible to issue start_single_write pulse to                               
@@ -837,7 +844,7 @@ module axi_full_core#(
 				// issued until burst_read_active signal is asserted.                                           
 				// read controller                                                                              
 				if (reads_done) begin                                                                                         
-					mst_exec_state <= IDLE_RW;                                                             
+					mst_exec_state <= IDLE_W;                                                             
 				end                                                                                           
 				else begin                                                                                         
 					mst_exec_state  <= INIT_READ;                                                               
@@ -848,19 +855,10 @@ module axi_full_core#(
 					else begin                                                                                      
 						start_single_burst_read <= 1'b0; //Negate to generate a pulse                            
 					end                                                                                        
-				end                                                                                           
+				end
 
-				INIT_COMPARE: begin                                                                                    
-				// This state is responsible to issue the state of comparison                                   
-				// of written data with the read data. If no error flags are set,                               
-				// compare_done signal will be asseted to indicate success.                                     
-				//if (~error_reg)                                                                             
-					ERROR <= error_reg;
-					mst_exec_state <= IDLE_RW;                                                               
-					compare_done <= 1'b1;                                                                         
-				end                                                                                             
 				default : begin                                                                                           
-					mst_exec_state  <= IDLE_RW;                                                              
+					mst_exec_state  <= IDLE_W;                                                              
 				end                                                                                             
 			endcase                                                                                             
 		end                                                                                                   
@@ -893,7 +891,7 @@ module axi_full_core#(
 																												
 		//The writes_done should be associated with a bready response                                           
 		//else if (M_AXI_BVALID && axi_bready && (write_burst_counter == {(C_NO_BURSTS_REQ-1){1}}) && axi_wlast)
-		else if (M_AXI_BVALID && (write_burst_counter == (PIXELS_HORIZONTAL*8)/(FDW*C_M_AXI_BURST_LEN)) && axi_bready)                          
+		else if (M_AXI_BVALID && (write_burst_counter == ADC_SINGLE_BURST_LENGTH / burst_size_bytes) && axi_bready)                          
 			writes_done <= 1'b1;                                                                                  
 		else                                                                                                    
 			writes_done <= 0;                                                                           
@@ -926,7 +924,7 @@ module axi_full_core#(
 																												
 		//The reads_done should be associated with a rready response                                            
 		//else if (M_AXI_BVALID && axi_bready && (write_burst_counter == {(C_NO_BURSTS_REQ-1){1}}) && axi_wlast)
-		else if (M_AXI_RVALID && axi_rready && (read_index == C_M_AXI_BURST_LEN-1) && (read_burst_counter == (PIXELS_HORIZONTAL*8)/(FDW*C_M_AXI_BURST_LEN)))
+		else if (M_AXI_RVALID && axi_rready && (read_index == C_M_AXI_BURST_LEN-1) && (read_burst_counter == USB_SINGLE_BURST_LENGTH / burst_size_bytes))
 			reads_done <= 1'b1;                                                                                   
 		else                                                                                                    
 			reads_done <= 0;                                                                             

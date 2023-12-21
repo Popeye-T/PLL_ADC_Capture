@@ -62,87 +62,20 @@ module axis2ddr_top#(
 	,	parameter integer C_S_AXI_ADDR_WIDTH	= 4
 )(
 //----------------------------------------------------
-// AXIS slave port
-    // AXI4Stream sink: Clock
-        input wire  S_AXIS_ACLK
-    // AXI4Stream sink: Reset
-    ,   input wire  S_AXIS_ARESETN
-
-    // Ready to accept data in
-    ,   output wire  S_AXIS_TREADY
-    // Data in
-    ,   input wire [AXIS_DATA_WIDTH-1 : 0] S_AXIS_TDATA
-    // Byte qualifier
-    ,   input wire [(AXIS_DATA_WIDTH/8)-1 : 0] S_AXIS_TSTRB
-    // Indicates boundary of last packet
-    ,   input wire  S_AXIS_TLAST
-    // Data is in valid
-    ,   input wire  S_AXIS_TVALID
-    // Indicate the start of one frame
-    ,   input wire  S_AXIS_TUSER
+// Adc Data Input
+        input   wire            adc_clk_ch_1
+    ,   input   wire    [13:0]  adc_data_ch_1
 
 //----------------------------------------------------
-// AXI-LITE slave port
-    // Global Clock Signal
-    ,   input wire  S_AXI_ACLK
-    // Global Reset Signal. This Signal is Active LOW
-    ,   input wire  S_AXI_ARESETN
-    // Write address (issued by master, acceped by Slave)
-    ,   input wire [C_S_AXI_ADDR_WIDTH-1 : 0] S_AXI_AWADDR
-    // Write channel Protection type. This signal indicates the
-        // privilege and security level of the transaction, and whether
-        // the transaction is a data access or an instruction access.
-    ,   input wire [2 : 0] S_AXI_AWPROT
-    // Write address valid. This signal indicates that the master signaling
-        // valid write address and control information.
-    ,   input wire  S_AXI_AWVALID
-    // Write address ready. This signal indicates that the slave is ready
-        // to accept an address and associated control signals.
-    ,   output wire  S_AXI_AWREADY
-    // Write data (issued by master, acceped by Slave) 
-    ,   input wire [C_S_AXI_DATA_WIDTH-1 : 0] S_AXI_WDATA
-    // Write strobes. This signal indicates which byte lanes hold
-        // valid data. There is one write strobe bit for each eight
-        // bits of the write data bus.    
-    ,   input wire [(C_S_AXI_DATA_WIDTH/8)-1 : 0] S_AXI_WSTRB
-    // Write valid. This signal indicates that valid write
-        // data and strobes are available.
-    ,   input wire  S_AXI_WVALID
-    // Write ready. This signal indicates that the slave
-        // can accept the write data.
-    ,   output wire  S_AXI_WREADY
-    // Write response. This signal indicates the status
-        // of the write transaction.
-    ,   output wire [1 : 0] S_AXI_BRESP
-    // Write response valid. This signal indicates that the channel
-        // is signaling a valid write response.
-    ,   output wire  S_AXI_BVALID
-    // Response ready. This signal indicates that the master
-        // can accept a write response.
-    ,   input wire  S_AXI_BREADY
-    // Read address (issued by master, acceped by Slave)
-    ,   input wire [C_S_AXI_ADDR_WIDTH-1 : 0] S_AXI_ARADDR
-    // Protection type. This signal indicates the privilege
-        // and security level of the transaction, and whether the
-        // transaction is a data access or an instruction access.
-    ,   input wire [2 : 0] S_AXI_ARPROT
-    // Read address valid. This signal indicates that the channel
-        // is signaling valid read address and control information.
-    ,   input wire  S_AXI_ARVALID
-    // Read address ready. This signal indicates that the slave is
-        // ready to accept an address and associated control signals.
-    ,   output wire  S_AXI_ARREADY
-    // Read data (issued by slave)
-    ,   output wire [C_S_AXI_DATA_WIDTH-1 : 0] S_AXI_RDATA
-    // Read response. This signal indicates the status of the
-        // read transfer.
-    ,   output wire [1 : 0] S_AXI_RRESP
-    // Read valid. This signal indicates that the channel is
-        // signaling the required read data.
-    ,   output wire  S_AXI_RVALID
-    // Read ready. This signal indicates that the master can
-        // accept the read data and response information.
-    ,   input wire  S_AXI_RREADY
+// Usb Data Output
+    ,   input   wire            usb_clk_ch_1
+    ,   input   wire            usb_data_req
+    ,   output  wire    [31:0]  usb_data_ch_1
+
+//----------------------------------------------------
+// usb trigger interface
+    ,   output  wire            usb_fifo_almost_empty
+    ,   input   wire           	usb_burst_trigger
 
 //----------------------------------------------------
 // AXI-FULL master port
@@ -272,93 +205,57 @@ module axis2ddr_top#(
 
 //----------------------------------------------------
 // wire definition
+    wire            fwr_clk             ;
+    wire            fwr_en              ;
+    wire [15 : 0]   fwr_data            ;
+    wire            frd_clk             ;
+    wire            frd_en              ;
+    wire [127 : 0]  frd_data            ;
+    wire            frd_almost_full     ;
 
-    wire                                fwr_rdy     ;
-    wire                                fwr_vld     ;
-    wire [AXI4_DATA_WIDTH-1:0]          fwr_dat     ;
-    wire                                fwr_full    ;
-    wire [FIFO_AW:0]                    fwr_cnt     ;
+    wire            bwr_clk             ;
+    wire            bwr_en              ;
+    wire [127 : 0]  bwr_data            ;
+    wire            brd_clk             ;
+    wire            brd_en              ;
+    wire [31 : 0]   brd_data            ;
+    wire            brd_almost_empty    ;
 
-    wire                                frd_rdy     ;
-    wire                                frd_vld     ;
-    wire [AXI4_DATA_WIDTH-1:0]          frd_din     ;
-    wire                                frd_empty   ;
-    wire [FIFO_AW:0]                    frd_cnt     ;
+    assign fwr_clk  =   adc_clk_ch_1;
+    assign fwr_en   =   1;
+    assign fwr_data =   {2'b0,adc_data_ch_1};
+    assign frd_clk  =   M_AXI_ACLK;
 
-    wire [clogb2(FRAME_MAX-1)-1:0]      frame_cnt   ;
+    assign bwr_clk          =   M_AXI_ACLK;
+    assign brd_clk          =   usb_clk_ch_1;
+    assign brd_en           =   usb_data_req;
+    assign usb_data_ch_1    =   brd_data;
 
-//---------------------------------------------------
-// AXI STREAM to FORWARD FIFO
-axis2fifo #(
-        .FAW                (FIFO_AW            )
-    ,   .AXIS_DATA_WIDTH    (AXIS_DATA_WIDTH    )
-    ,   .AXI4_DATA_WIDTH    (AXI4_DATA_WIDTH    )
-    ,   .FRAME_DELAY        (FRAME_MAX          )
-)u_axis_salve2fifo(
-//----------------------------------------------------
-// AXIS slave port
-        .S_AXIS_ACLK        (S_AXIS_ACLK        )
-    ,   .S_AXIS_ARESETN     (S_AXIS_ARESETN     )
-    ,   .S_AXIS_TREADY      (S_AXIS_TREADY      )
-    ,   .S_AXIS_TDATA       (S_AXIS_TDATA       )
-    ,   .S_AXIS_TSTRB       (S_AXIS_TSTRB       )
-    ,   .S_AXIS_TLAST       (S_AXIS_TLAST       )
-    ,   .S_AXIS_TVALID      (S_AXIS_TVALID      )
-    ,   .S_AXIS_USER        (S_AXIS_TUSER       )
-
-//----------------------------------------------------
-// FIFO write interface
-    ,   .fwr_rdy            (fwr_rdy            )
-    ,   .fwr_vld            (fwr_vld            )
-    ,   .fwr_dat            (fwr_dat            )
-    ,   .fwr_full           (fwr_full           )
-    ,   .fwr_cnt            (fwr_cnt            )
-
-//----------------------------------------------------
-// USER INTERFACE
-    ,   .frame_cnt          (frame_cnt          )
-);
-
-
+    assign usb_fifo_almost_empty = brd_almost_empty;
 
 //---------------------------------------------------
 // FORWARD FIFO STORAGE
-fifo #(
-        .FDW                (AXI4_DATA_WIDTH    )
-    ,   .FAW                (FIFO_AW            )
-)u_forwardfifo(
-        .rst                (~S_AXIS_ARESETN    )
-    ,   .clr                (1'b0               )
-    ,   .clk                (S_AXIS_ACLK        )
-    ,   .wr_rdy             (fwr_rdy            )
-    ,   .wr_vld             (fwr_vld            )
-    ,   .wr_din             (fwr_dat            )
-    ,   .rd_rdy             (frd_rdy            )
-    ,   .rd_vld             (frd_vld            )
-    ,   .rd_dout            (frd_din            )
-    ,   .empty              (frd_empty          )
-    ,   .full               (fwr_full           )
-    ,   .fullN              ()
-    ,   .emptyN             ()
-    ,   .rd_cnt             (frd_cnt            )
-    ,   .wr_cnt             (fwr_cnt            )
+fifo_generator_1 u_forward_fifo (
+    .rst                (0                      ),      // input wire rst
+    .wr_clk             (fwr_clk                ),      // input wire wr_clk
+    .wr_en              (fwr_en                 ),      // input wire wr_en
+    .din                (fwr_data               ),      // input wire [15 : 0] din
+    .rd_clk             (frd_clk                ),      // input wire rd_clk
+    .rd_en              (frd_en                 ),      // input wire rd_en
+    .dout               (frd_data               ),      // output wire [127 : 0] dout
+    .full               (),                             // output wire full
+    .almost_full        (frd_almost_full        ),      // output wire almost_full
+    .empty              (),                             // output wire empty
+    .wr_rst_busy        (),                             // output wire wr_rst_busy
+    .rd_rst_busy        ()                              // output wire rd_rst_busy
 );
-
 
 //---------------------------------------------------
 // FIFO TO AXI FULL
 axi_full_core #(
     //----------------------------------------------------
-    // FIFO parameters
-        .FDW                            (AXI4_DATA_WIDTH    )
-    ,   .FAW                            (FIFO_AW            )
-    ,   .FRAME_DELAY                    (FRAME_MAX          )
-    ,   .PIXELS_HORIZONTAL              (PIXELS_H           )
-    ,   .PIXELS_VERTICAL                (PIXELS_V           )
-
-    //----------------------------------------------------
     // AXI-FULL parameters
-	,   .C_M_TARGET_SLAVE_BASE_ADDR	    (C_M_TARGET_SLAVE_BASE_ADDR)   
+	    .C_M_TARGET_SLAVE_BASE_ADDR	    (C_M_TARGET_SLAVE_BASE_ADDR)   
 	,   .C_M_AXI_BURST_LEN	            (C_M_AXI_BURST_LEN	       )   
 	,   .C_M_AXI_ID_WIDTH	            (C_M_AXI_ID_WIDTH	       )   
 	,   .C_M_AXI_ADDR_WIDTH	            (C_M_AXI_ADDR_WIDTH	       )   
@@ -372,16 +269,23 @@ axi_full_core #(
 
 //----------------------------------------------------
 // forward FIFO read interface
-        .frd_rdy            (frd_rdy            )
-    ,   .frd_vld            (frd_vld            )
-    ,   .frd_din            (frd_din            )
-    ,   .frd_empty          (frd_empty          )
-    ,   .frd_cnt            (frd_cnt            )   
+        .frd_en                 (frd_en                 )
+    ,   .frd_data               (frd_data               )
+    ,   .frd_almost_full        (frd_almost_full        )  
+
+//----------------------------------------------------
+// backward FIFO write interface
+    ,   .bwr_en                 (bwr_en                 )
+    ,   .bwr_data               (bwr_data               )
+
+//----------------------------------------------------
+// usb trigger interface
+    ,   .usb_burst_trigger      (usb_burst_trigger      )
 
 //----------------------------------------------------
 // AXI-FULL master port
-    ,   .INIT_AXI_TXN       (INIT_AXI_TXN       )
-    ,   .TXN_DONE           (TXN_DONE           )
+    ,   .INIT_AXI_TXN       (0)
+    ,   .TXN_DONE           ()
     ,   .ERROR              ()
     ,   .M_AXI_ACLK         (M_AXI_ACLK         )
     ,   .M_AXI_ARESETN      (M_AXI_ARESETN      )
@@ -439,50 +343,19 @@ axi_full_core #(
     ,   .M_AXI_RREADY       (M_AXI_RREADY       )
 );
 
-
-saxi_lite_core #(
-    // Width of S_AXI data bus
-        .C_S_AXI_DATA_WIDTH	    ( C_S_AXI_DATA_WIDTH    )
-    // Width of S_AXI address bus
-    ,   .C_S_AXI_ADDR_WIDTH	    ( C_S_AXI_ADDR_WIDTH    )
-
-    ,   .FRAME_DELAY            (FRAME_MAX              )
-)u_saxi_lite_core(
-    // Users to add ports here
-        .frame_cnt          (frame_cnt          )
-
-    // User ports ends
-    // Do not modify the ports beyond this line
-    ,   .S_AXI_ACLK         (S_AXI_ACLK         )
-    ,   .S_AXI_ARESETN      (S_AXI_ARESETN      )
-    ,   .S_AXI_AWADDR       (S_AXI_AWADDR       )
-    ,   .S_AXI_AWPROT       (S_AXI_AWPROT       )
-    ,   .S_AXI_AWVALID      (S_AXI_AWVALID      )
-    ,   .S_AXI_AWREADY      (S_AXI_AWREADY      )
-    ,   .S_AXI_WDATA        (S_AXI_WDATA        )
-    ,   .S_AXI_WSTRB        (S_AXI_WSTRB        )
-    ,   .S_AXI_WVALID       (S_AXI_WVALID       )
-    ,   .S_AXI_WREADY       (S_AXI_WREADY       )
-    ,   .S_AXI_BRESP        (S_AXI_BRESP        )
-    ,   .S_AXI_BVALID       (S_AXI_BVALID       )
-    ,   .S_AXI_BREADY       (S_AXI_BREADY       )
-    ,   .S_AXI_ARADDR       (S_AXI_ARADDR       )
-    ,   .S_AXI_ARPROT       (S_AXI_ARPROT       )
-    ,   .S_AXI_ARVALID      (S_AXI_ARVALID      )
-    ,   .S_AXI_ARREADY      (S_AXI_ARREADY      )
-    ,   .S_AXI_RDATA        (S_AXI_RDATA        )
-    ,   .S_AXI_RRESP        (S_AXI_RRESP        )
-    ,   .S_AXI_RVALID       (S_AXI_RVALID       )
-    ,   .S_AXI_RREADY       (S_AXI_RREADY       )
+backward_fifo u_backward_fifo (
+  .rst              (0                  ),  // input wire rst
+  .wr_clk           (bwr_clk            ),  // input wire wr_clk
+  .wr_en            (bwr_en             ),  // input wire wr_en
+  .din              (bwr_data           ),  // input wire [127 : 0] din
+  .rd_clk           (brd_clk            ),  // input wire rd_clk
+  .rd_en            (brd_en             ),  // input wire rd_en
+  .dout             (brd_data           ),  // output wire [31 : 0] dout
+  .full             (),                     // output wire full
+  .empty            (),                     // output wire empty
+  .almost_empty     (brd_almost_empty   ),  // output wire almost_empty
+  .wr_rst_busy      (),                     // output wire wr_rst_busy
+  .rd_rst_busy      ()                      // output wire rd_rst_busy
 );
-
-// function called clogb2 that returns an integer which has the 
-// value of the ceiling of the log base 2.                      
-function integer clogb2 (input integer bit_depth);              
-begin                                                           
-for(clogb2=0; bit_depth>0; clogb2=clogb2+1)                   
-    bit_depth = bit_depth >> 1;                                 
-end                                                           
-endfunction    
 
 endmodule

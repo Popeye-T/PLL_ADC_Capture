@@ -99,6 +99,10 @@ wire        adc_clk_ch_1;
 wire [13:0] adc_data_ch_1;
 wire [13:0] ADC1_DATA_USB;
 wire [13:0] ADC2_DATA_USB;
+wire                usb_burst_trigger           ;
+wire                usb_fifo_almost_empty       ;
+wire    [31:0]      usb_data_ch_1               ;
+wire                usb_data_req                ;
 
 
 /*系统时钟，差分转单端*/
@@ -153,24 +157,15 @@ ila_0 u_ila_0(
 	    .clk                    (adc_clk_ch_1           )  // input wire clk
 	,   .probe0                 (adc_data_ch_1          )  // input wire [13:0]  probe0  
 );
-
-fifo_generator_0 fifo_generator_0_inst (
-        .rst                    (0                      )   // input wire rst
-    ,   .wr_clk                 (adc_clk_ch_1           )   // input wire wr_clk
-    ,   .wr_en                  (1                      )   // input wire wr_en
-    ,   .din                    (adc_data_ch_1          )   // input wire [31 : 0] din
-    ,   .rd_clk                 (CLK_i                  )   // input wire rd_clk
-    ,   .rd_en                  (1                      )   // input wire rd_en
-    ,   .dout                   (ADC1_DATA_USB          )   // output wire [31 : 0] dout
-    ,   .full                   ()
-    ,   .empty                  ()
-    ,   .wr_rst_busy            ()
-    ,   .rd_rst_busy            ()
-);
-
+          
 ft60x_top u_ft60x_top(
-        .clk_50m                (clk_10M            )
     // FIFO interface
+        .usb_data_ch_1          (usb_data_ch_1          )
+    ,   .usb_data_req           (usb_data_req           )
+    ,   .usb_fifo_almost_empty  (usb_fifo_almost_empty  )
+    ,   .usb_burst_trigger      (usb_burst_trigger      )
+
+    //USB interface
     ,   .CLK_i                  (CLK_i              )
     ,   .DATA_io                (DATA_io            )
     ,   .BE_io                  (BE_io              )
@@ -184,30 +179,36 @@ ft60x_top u_ft60x_top(
     ,   .GPIO_o                 (GPIO_o             )
 );
 
-
 system_wrapper u_system_wrapper(
-        .DDR_addr               (DDR_addr           )
-    ,   .DDR_ba                 (DDR_ba             )
-    ,   .DDR_cas_n              (DDR_cas_n          )
-    ,   .DDR_ck_n               (DDR_ck_n           )
-    ,   .DDR_ck_p               (DDR_ck_p           )
-    ,   .DDR_cke                (DDR_cke            )
-    ,   .DDR_cs_n               (DDR_cs_n           )
-    ,   .DDR_dm                 (DDR_dm             )
-    ,   .DDR_dq                 (DDR_dq             )
-    ,   .DDR_dqs_n              (DDR_dqs_n          )
-    ,   .DDR_dqs_p              (DDR_dqs_p          )
-    ,   .DDR_odt                (DDR_odt            )
-    ,   .DDR_ras_n              (DDR_ras_n          )
-    ,   .DDR_reset_n            (DDR_reset_n        )
-    ,   .DDR_we_n               (DDR_we_n           )
-    ,   .FIXED_IO_ddr_vrn       (FIXED_IO_ddr_vrn   )
-    ,   .FIXED_IO_ddr_vrp       (FIXED_IO_ddr_vrp   )
-    ,   .FIXED_IO_mio           (FIXED_IO_mio       )
-    ,   .FIXED_IO_ps_clk        (FIXED_IO_ps_clk    )
-    ,   .FIXED_IO_ps_porb       (FIXED_IO_ps_porb   )
-    ,   .FIXED_IO_ps_srstb      (FIXED_IO_ps_srstb  )
-    ,   .ps_emio_tri_io         (ps_emio_tri_io     )
+        .DDR_addr                   (DDR_addr                   )
+    ,   .DDR_ba                     (DDR_ba                     )
+    ,   .DDR_cas_n                  (DDR_cas_n                  )
+    ,   .DDR_ck_n                   (DDR_ck_n                   )
+    ,   .DDR_ck_p                   (DDR_ck_p                   )
+    ,   .DDR_cke                    (DDR_cke                    )
+    ,   .DDR_cs_n                   (DDR_cs_n                   )
+    ,   .DDR_dm                     (DDR_dm                     )
+    ,   .DDR_dq                     (DDR_dq                     )
+    ,   .DDR_dqs_n                  (DDR_dqs_n                  )
+    ,   .DDR_dqs_p                  (DDR_dqs_p                  )
+    ,   .DDR_odt                    (DDR_odt                    )
+    ,   .DDR_ras_n                  (DDR_ras_n                  )
+    ,   .DDR_reset_n                (DDR_reset_n                )
+    ,   .DDR_we_n                   (DDR_we_n                   )
+    ,   .FIXED_IO_ddr_vrn           (FIXED_IO_ddr_vrn           )
+    ,   .FIXED_IO_ddr_vrp           (FIXED_IO_ddr_vrp           )
+    ,   .FIXED_IO_mio               (FIXED_IO_mio               )
+    ,   .FIXED_IO_ps_clk            (FIXED_IO_ps_clk            )
+    ,   .FIXED_IO_ps_porb           (FIXED_IO_ps_porb           )
+    ,   .FIXED_IO_ps_srstb          (FIXED_IO_ps_srstb          )
+    ,   .ps_emio_tri_io             (ps_emio_tri_io             )
+    ,   .adc_clk_ch_1_0             (adc_clk_ch_1               )
+    ,   .adc_data_ch_1_0            (adc_data_ch_1              )
+    ,   .usb_burst_trigger_0        (usb_burst_trigger          )
+    ,   .usb_fifo_almost_empty_0    (usb_fifo_almost_empty      )
+    ,   .usb_clk_ch_1_0             (CLK_i                      )
+    ,   .usb_data_ch_1_0            (usb_data_ch_1              )
+    ,   .usb_data_req_0             (usb_data_req               )
 );
 
 endmodule

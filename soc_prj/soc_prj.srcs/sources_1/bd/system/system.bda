@@ -187,6 +187,24 @@
                 "VH": "2",
                 "VT": "PM",
                 "TU": "active"
+            },
+            "V3": {
+                "VT": "AC",
+                "BA": "0x00000000",
+                "HA": "0x3FFFFFFF",
+                "BP": "C_BASEADDR",
+                "HP": "C_HIGHADDR",
+                "MA": "M_AXI",
+                "MX": "/axis2ddr_top_0",
+                "MI": "M_AXI",
+                "MS": "SEG_processing_system7_0_HP0_DDR_LOWOCM",
+                "MV": "xilinx.com:module_ref:axis2ddr_top:1.0",
+                "SX": "/processing_system7_0",
+                "SI": "S_AXI_HP0",
+                "SS": "HP0_DDR_LOWOCM",
+                "SV": "xilinx.com:ip:processing_system7:5.5",
+                "TM": "both",
+                "TU": "memory"
             }
         },
         "edges": [
@@ -197,6 +215,11 @@
             {
                 "src": "V1",
                 "trg": "V2"
+            },
+            {
+                "src": "V3",
+                "trg": "V2",
+                "EH": "2"
             }
         ]
     }

@@ -3,7 +3,7 @@
 module axi_wr_ddr_tb();
 
 localparam _DATA_WIDTH_ = 32;
-localparam _PERIOD_ = 10;
+localparam _AXI_PERIOD_ = 5;
 
 
 parameter integer AXI_ID_WIDTH	        = 1    ;
@@ -16,8 +16,8 @@ parameter integer AXI_RUSER_WIDTH	    = 0    ;
 parameter integer AXI_BUSER_WIDTH	    = 0    ;
 
 //AXIS interface
-reg     AXIS_ACLK   = 1'b0;
-reg     AXIS_ARESETN= 1'b0;
+reg     M_AXI_ACLK    = 1'b0;
+reg     M_AXI_ARESETN = 1'b0;
 wire    AXIS_TVALID;
 wire    AXIS_TREADY;
 wire  	AXIS_TUSER;
@@ -28,10 +28,7 @@ wire    [(_DATA_WIDTH_/8)-1 : 0]    AXIS_TSTRB;
 wire   [_DATA_WIDTH_-1 : 0]         M_AXIS_TDATA;
 
 //AXI-FULL interface
-    wire                                    M_AXI_ACLK     
-;   wire                                    M_AXI_ARESETN  
-
-;   wire [AXI_ID_WIDTH-1 : 0]               M_AXI_AWID     
+    wire [AXI_ID_WIDTH-1 : 0]               M_AXI_AWID     
 ;   wire [AXI_ADDR_WIDTH-1 : 0]             M_AXI_AWADDR   
 ;   wire [7 : 0]                            M_AXI_AWLEN    
 ;   wire [2 : 0]                            M_AXI_AWSIZE   
@@ -81,40 +78,39 @@ wire   [_DATA_WIDTH_-1 : 0]         M_AXIS_TDATA;
 ;   wire                                    M_AXI_RREADY   
 ;
 
-
-assign	M_AXI_ACLK     	=	AXIS_ACLK;
-assign	M_AXI_ARESETN  	=	AXIS_ARESETN;
-
-always #(_PERIOD_/2) AXIS_ACLK = ~AXIS_ACLK;
+always #(_AXI_PERIOD_/2) M_AXI_ACLK = ~M_AXI_ACLK;
 
 initial begin
-    #(_PERIOD_*10);
-    AXIS_ARESETN = 1'b1;
+    #(_AXI_PERIOD_*10);
+    M_AXI_ARESETN = 1'b1;
 end
 
-maxis_v1_0_M00_AXIS#
-(
-	// Width of S_AXIS address bus. The slave accepts the read and write addresses of width C_M_AXIS_TDATA_WIDTH.
-	    .C_M_AXIS_TDATA_WIDTH (_DATA_WIDTH_)
-	// Start count is the number of clock cycles the master will wait before initiating/issuing any transaction.
-	,   .C_M_START_COUNT (30)
-)u_maxis_v1_0_M00_AXIS(
-	// Global ports
-	    .M_AXIS_ACLK    		(AXIS_ACLK      )
-	//
-	,  	.M_AXIS_ARESETN  		(AXIS_ARESETN   )
-	// Master Stream Ports. TVALID indicates that the master is driving a valid transfer, A transfer takes place when both TVALID and TREADY are asserted.
-	,  	.M_AXIS_TVALID   		(AXIS_TVALID    )
-	// TDATA is the primary payload that is used to provide the data that is passing across the interface from the master.
-	,  	.M_AXIS_TDATA    		(AXIS_TDATA     )
-	// TSTRB is the byte qualifier that indicates whether the content of the associated byte of TDATA is processed as a data byte or a position byte.
-	,  	.M_AXIS_TSTRB    		(AXIS_TSTRB     )
-	// TLAST indicates the boundary of a packet.
-	,  	.M_AXIS_TLAST    		(AXIS_TLAST     )
-	// TREADY indicates that the slave can accept a transfer in the current cycle.
-	,  	.M_AXIS_TREADY   		(AXIS_TREADY    )
-	,	.M_AXIS_TUSER			(AXIS_TUSER		)
-);
+parameter _ADC_PERIOD_ = 10;
+reg adc_clk_ch_1 = 0;
+initial begin
+    #3;
+    forever begin
+		#(_ADC_PERIOD_/2)
+		adc_clk_ch_1 = ~adc_clk_ch_1;
+	end
+end
+
+parameter _USB_PERIOD_ = 10;
+reg usb_clk_ch_1 = 0;
+initial begin
+    #1;
+    forever begin
+		#(_USB_PERIOD_/2)
+		usb_clk_ch_1 = ~usb_clk_ch_1;
+	end
+end
+
+reg [13:0] cnt = 0;
+always @(posedge adc_clk_ch_1)begin
+    cnt <= cnt + 1;
+end
+
+wire [31:0]	usb_data_ch_1;
 
 
 axis2ddr_top #(
@@ -140,15 +136,16 @@ axis2ddr_top #(
 	,   .C_M_AXI_BUSER_WIDTH	( 0 )
 )u_axis2ddr_top(
 //----------------------------------------------------
-// AXIS slave port
-        .S_AXIS_ACLK            (AXIS_ACLK      )
-    ,   .S_AXIS_ARESETN         (AXIS_ARESETN   )
-    ,   .S_AXIS_TREADY          (AXIS_TREADY    )
-    ,   .S_AXIS_TDATA           (AXIS_TDATA     )
-    ,   .S_AXIS_TSTRB           (AXIS_TSTRB     )
-    ,   .S_AXIS_TLAST           (AXIS_TLAST     )
-    ,   .S_AXIS_TVALID          (AXIS_TVALID    )
-	,	.S_AXIS_TUSER			(AXIS_TUSER		)
+// Adc Data Input
+     	.adc_clk_ch_1			(adc_clk_ch_1	)
+    ,	.adc_data_ch_1			(cnt			)
+
+//----------------------------------------------------
+// Usb Data Output
+    ,	.usb_clk_ch_1			(usb_clk_ch_1	)
+    ,	.usb_burst_trigger_ch1	(1)
+	,	.usb_data_req			(1)
+    ,	.usb_data_ch_1			(usb_data_ch_1	)
 
 //----------------------------------------------------
 // AXI-FULL master port
