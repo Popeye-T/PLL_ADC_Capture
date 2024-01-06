@@ -1,7 +1,7 @@
 {
   "design": {
     "design_info": {
-      "boundary_crc": "0x8AFD6953EC3F44F3",
+      "boundary_crc": "0xA0BD089C1E06AED9",
       "device": "xc7z015clg485-2",
       "gen_directory": "../../../../soc_prj.gen/sources_1/bd/system",
       "name": "system",
@@ -241,6 +241,9 @@
       },
       "usb_fifo_almost_empty_0": {
         "direction": "O"
+      },
+      "trigger_en_0": {
+        "direction": "I"
       }
     },
     "components": {
@@ -2521,6 +2524,9 @@
             "left": "31",
             "right": "0"
           },
+          "trigger_en": {
+            "direction": "I"
+          },
           "usb_fifo_almost_empty": {
             "direction": "O"
           },
@@ -2651,6 +2657,12 @@
           "axi_interconnect_0/M00_ARESETN",
           "axi_interconnect_0/S00_ARESETN",
           "axis2ddr_top_0/M_AXI_ARESETN"
+        ]
+      },
+      "trigger_en_0_1": {
+        "ports": [
+          "trigger_en_0",
+          "axis2ddr_top_0/trigger_en"
         ]
       },
       "usb_burst_trigger_0_1": {

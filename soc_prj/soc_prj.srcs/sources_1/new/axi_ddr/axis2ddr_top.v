@@ -74,6 +74,7 @@ module axis2ddr_top#(
 
 //----------------------------------------------------
 // usb trigger interface
+    ,   input   wire            trigger_en
     ,   output  wire            usb_fifo_almost_empty
     ,   input   wire           	usb_burst_trigger
 
@@ -208,6 +209,7 @@ module axis2ddr_top#(
     wire            fwr_clk             ;
     wire            fwr_en              ;
     wire [15 : 0]   fwr_data            ;
+    wire            fwr_en_pause        ;
     wire            frd_clk             ;
     wire            frd_en              ;
     wire [127 : 0]  frd_data            ;
@@ -220,9 +222,21 @@ module axis2ddr_top#(
     wire            brd_en              ;
     wire [31 : 0]   brd_data            ;
     wire            brd_almost_empty    ;
+    
+	reg             trigger_en_d1       ;
+	reg             trigger_en_d2       ;
+    reg             fwr_en_pause_d1     ;
+    reg             fwr_en_pause_d2     ;
+
+    always @(adc_clk_ch_1) begin
+        trigger_en_d1   <=  trigger_en;
+        trigger_en_d2   <=  trigger_en_d1;
+        fwr_en_pause_d1 <=  fwr_en_pause;
+        fwr_en_pause_d2 <=  fwr_en_pause_d1;
+    end
 
     assign fwr_clk  =   adc_clk_ch_1;
-    assign fwr_en   =   1;
+    assign fwr_en   =   trigger_en_d2 & (!fwr_en_pause_d2);
     assign fwr_data =   {2'b0,adc_data_ch_1};
     assign frd_clk  =   M_AXI_ACLK;
 
@@ -236,7 +250,7 @@ module axis2ddr_top#(
 //---------------------------------------------------
 // FORWARD FIFO STORAGE
 fifo_generator_1 u_forward_fifo (
-    .rst                (0                      ),      // input wire rst
+    .rst                (!trigger_en_d2         ),      // input wire rst
     .wr_clk             (fwr_clk                ),      // input wire wr_clk
     .wr_en              (fwr_en                 ),      // input wire wr_en
     .din                (fwr_data               ),      // input wire [15 : 0] din
@@ -268,8 +282,12 @@ axi_full_core #(
 )u_axi_full_core(
 
 //----------------------------------------------------
+// forward FIFO write interface
+        .fwr_en_pause           (fwr_en_pause           )
+
+//----------------------------------------------------
 // forward FIFO read interface
-        .frd_en                 (frd_en                 )
+    ,   .frd_en                 (frd_en                 )
     ,   .frd_data               (frd_data               )
     ,   .frd_almost_full        (frd_almost_full        )  
 
@@ -280,6 +298,7 @@ axi_full_core #(
 
 //----------------------------------------------------
 // usb trigger interface
+    ,   .trigger_en             (trigger_en             )
     ,   .usb_burst_trigger      (usb_burst_trigger      )
 
 //----------------------------------------------------
@@ -344,7 +363,7 @@ axi_full_core #(
 );
 
 backward_fifo u_backward_fifo (
-  .rst              (0                  ),  // input wire rst
+  .rst              (!trigger_en_d2     ),  // input wire rst
   .wr_clk           (bwr_clk            ),  // input wire wr_clk
   .wr_en            (bwr_en             ),  // input wire wr_en
   .din              (bwr_data           ),  // input wire [127 : 0] din

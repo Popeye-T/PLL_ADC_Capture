@@ -179,6 +179,9 @@ module axi_full_core#(
     ,   output wire  M_AXI_RREADY
 
 //----------------------------------------------------
+// forward FIFO write interface
+	,	output  reg             fwr_en_pause
+//----------------------------------------------------
 // forward FIFO read interface
     ,   output  wire           	frd_en
     ,   input   wire	[127:0]	frd_data
@@ -191,11 +194,10 @@ module axi_full_core#(
 
 //----------------------------------------------------
 // usb trigger interface
+	,	input   wire 			trigger_en
     ,   input   wire           	usb_burst_trigger
 );
-
-	reg			[1:0]	wr_buffer = 0;
-	reg			[1:0]	rd_buffer = 0-1;
+	reg		[15:0]		wr_burst_cnt;
 	reg					usb_burst_trigger_d1;
 	reg					usb_burst_trigger_d2;
 
@@ -230,18 +232,10 @@ module axi_full_core#(
 	// Example State machine to initialize counter, initialize write transactions, 
 	// initialize read transactions and comparison of read data with the 
 	// written data words.
-	parameter [3:0] IDLE_W = 4'b0000, // This state initiates AXI4Lite transaction 
-			// after the state machine changes state to INIT_WRITE 
-			// when there is 0 to 1 transition on INIT_AXI_TXN
-		INIT_WRITE   = 4'b0001, // This state initializes write transaction,
-			// once writes are done, the state machine 
-			// changes state to INIT_READ 
-		INIT_READ = 4'b0010, // This state initializes read transaction
-			// once reads are done, the state machine 
-			// changes state to INIT_COMPARE 
-		INIT_COMPARE = 4'b0011, // This state issues the status of comparison 
-			// of the written data with the read data	
-		IDLE_RW = 4'b0100;
+	parameter [3:0] IDLE_W 		= 4'b0000,
+					IDLE_R		= 4'b0001,
+					INIT_WRITE	= 4'b0010,
+					INIT_READ 	= 4'b0100;
 
 	 reg [3:0] mst_exec_state;
 
@@ -291,7 +285,7 @@ module axi_full_core#(
 	//I/O Connections. Write Address (AW)
 	assign M_AXI_AWID	= 'b0;
 	//The AXI address is a concatenation of the target base address + active offset range
-	assign M_AXI_AWADDR	= C_M_TARGET_SLAVE_BASE_ADDR + axi_awaddr + wr_buffer * USB_TOTAL_BURST_LENGTH;
+	assign M_AXI_AWADDR	= C_M_TARGET_SLAVE_BASE_ADDR + axi_awaddr;
 	//Burst LENgth is number of transaction beats, minus 1
 	assign M_AXI_AWLEN	= C_M_AXI_BURST_LEN - 1;
 	//Size should be C_M_AXI_DATA_WIDTH, in 2^SIZE bytes, otherwise narrow bursts are used
@@ -316,7 +310,7 @@ module axi_full_core#(
 	assign M_AXI_BREADY	= axi_bready;
 	//Read Address (AR)
 	assign M_AXI_ARID	= 'b0;
-	assign M_AXI_ARADDR	= C_M_TARGET_SLAVE_BASE_ADDR + axi_araddr + rd_buffer * USB_TOTAL_BURST_LENGTH;
+	assign M_AXI_ARADDR	= C_M_TARGET_SLAVE_BASE_ADDR + axi_araddr;
 	//Burst LENgth is number of transaction beats, minus 1
 	assign M_AXI_ARLEN	= C_M_AXI_BURST_LEN - 1;
 	//Size should be C_M_AXI_DATA_WIDTH, in 2^n bytes, otherwise narrow bursts are used
@@ -401,16 +395,7 @@ module axi_full_core#(
 		else begin                                                           
 			axi_awaddr <= axi_awaddr;
 		end                                        
-	end             
-	                                                   
-	always @(posedge M_AXI_ACLK) begin                                                                
-		if (M_AXI_ARESETN == 0) begin                                                            
-			wr_buffer <= 0;                                             
-		end                                                              
-		else if (M_AXI_AWREADY & axi_awvalid & (axi_awaddr >= (USB_TOTAL_BURST_LENGTH - C_M_AXI_BURST_LEN * (C_M_AXI_DATA_WIDTH / 8)) - 1)) begin                                                            
-			wr_buffer <=  (wr_buffer + 1 == rd_buffer) ? (wr_buffer + 2) : (wr_buffer + 1);                   
-		end                                    
-	end   
+	end
 
 	//--------------------
 	//Write Data Channel
@@ -604,16 +589,7 @@ module axi_full_core#(
 	    else begin                                                            
 	      	axi_araddr <= axi_araddr;       
 		end                               
-	end                                                                
-	                                                   
-	always @(posedge M_AXI_ACLK) begin                                                                
-		if (M_AXI_ARESETN == 0) begin                                                            
-			rd_buffer <= 0;                                             
-		end                                                              
-		else if (M_AXI_AWREADY & axi_awvalid & (axi_araddr >= (USB_TOTAL_BURST_LENGTH - C_M_AXI_BURST_LEN * (C_M_AXI_DATA_WIDTH / 8)) - 1)) begin                                                            
-			rd_buffer <=  wr_buffer - 1;                   
-		end                                    
-	end   
+	end
 
 	//--------------------------------
 	//Read Data (and Response) Channel
@@ -800,32 +776,49 @@ module axi_full_core#(
 			start_single_burst_read  <= 1'b0;                                                                   
 			compare_done      <= 1'b0;                                                                          
 			ERROR <= 1'b0;   
+			wr_burst_cnt	<=	0;
+			fwr_en_pause <= 0;
 		end
 		else begin                                                                                                 
 																												
 			// state transition                                                                                 
 			case (mst_exec_state)                                                                               
 																												
-				IDLE_W:
-				if(usb_burst_trigger_d2) begin
-					mst_exec_state  <= INIT_READ;
+				IDLE_W: begin
+					if(frd_almost_full) begin                                                            
+						mst_exec_state  <= INIT_WRITE;                                                              
+						ERROR <= 1'b0;
+						compare_done <= 1'b0;
+					end    
+					else begin                                                                                         
+						mst_exec_state  <= IDLE_W;                                                            
+					end     
 				end
-				else if(frd_almost_full) begin                                                            
-					mst_exec_state  <= INIT_WRITE;                                                              
-					ERROR <= 1'b0;
-					compare_done <= 1'b0;
-				end    
-				else begin                                                                                         
-					mst_exec_state  <= IDLE_W;                                                            
-				end        
+
+				IDLE_R: begin
+					if(usb_burst_trigger_d2) begin
+						mst_exec_state  <= INIT_READ;
+					end
+					else begin                                                                                         
+						mst_exec_state  <= IDLE_R;                                                            
+					end   
+				end
 
 				INIT_WRITE:                                                                                       
 				// This state is responsible to issue start_single_write pulse to                               
 				// initiate a write transaction. Write transactions will be                                     
 				// issued until burst_write_active signal is asserted.                                          
 				// write controller                                                                             
-				if (writes_done) begin                                                                                         
-					mst_exec_state <= IDLE_W;                                                              
+				if (writes_done) begin     
+					wr_burst_cnt	<=	wr_burst_cnt + 1;
+					if(wr_burst_cnt >= USB_TOTAL_BURST_LENGTH / ADC_SINGLE_BURST_LENGTH -1) begin
+						mst_exec_state <= INIT_READ;
+						wr_burst_cnt	<=	0;
+						fwr_en_pause <= 1;
+					end
+					else begin                                           
+						mst_exec_state <= IDLE_W; 
+					end                                                                                     
 				end                                                                                           
 				else begin                                                                                         
 					mst_exec_state  <= INIT_WRITE;                                                              
@@ -843,8 +836,16 @@ module axi_full_core#(
 				// initiate a read transaction. Read transactions will be                                       
 				// issued until burst_read_active signal is asserted.                                           
 				// read controller                                                                              
-				if (reads_done) begin                                                                                         
-					mst_exec_state <= IDLE_W;                                                             
+				if (reads_done) begin    
+					wr_burst_cnt	<=	wr_burst_cnt + 1;
+					if(wr_burst_cnt >= USB_TOTAL_BURST_LENGTH / USB_SINGLE_BURST_LENGTH -1) begin
+						mst_exec_state <= IDLE_W;
+						wr_burst_cnt	<=	0;
+						fwr_en_pause <= 0;
+					end
+					else begin                                           
+						mst_exec_state <= IDLE_R; 
+					end
 				end                                                                                           
 				else begin                                                                                         
 					mst_exec_state  <= INIT_READ;                                                               

@@ -112,6 +112,13 @@ end
 
 wire [31:0]	usb_data_ch_1;
 
+reg     trigger_en;
+initial begin
+	trigger_en = 0;
+	#1000;
+	trigger_en = 1;
+end
+
 
 axis2ddr_top #(
         // Base address of targeted slave
@@ -143,9 +150,15 @@ axis2ddr_top #(
 //----------------------------------------------------
 // Usb Data Output
     ,	.usb_clk_ch_1			(usb_clk_ch_1	)
-    ,	.usb_burst_trigger_ch1	(1)
 	,	.usb_data_req			(1)
     ,	.usb_data_ch_1			(usb_data_ch_1	)
+
+	
+//----------------------------------------------------
+// usb trigger interface
+    ,  	.trigger_en				(trigger_en		)
+    ,  	.usb_fifo_almost_empty	()
+    ,  	.usb_burst_trigger		(1)
 
 //----------------------------------------------------
 // AXI-FULL master port

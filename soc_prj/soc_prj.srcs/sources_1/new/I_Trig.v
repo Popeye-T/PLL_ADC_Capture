@@ -26,7 +26,7 @@ module I_Trig(
     output reg clk_div
 );
 parameter NUM_DIV = 200;
-reg [10:0]cnt;
+reg [12:0]cnt;
 
 always @(posedge clk or negedge rst_n)
 if(!rst_n) begin
