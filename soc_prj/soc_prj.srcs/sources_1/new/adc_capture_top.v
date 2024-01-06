@@ -54,7 +54,7 @@ module adc_capture_top(
     output      ADC1_SDATA,           //待机模式-全局(ADC、内部基准电压源和输出缓冲器关断）
     output      ADC1_SCLK,            //低采样频率(<50MHZ）的低速模式控制
 
-   /*ADC1*/
+   /*ADC2*/
     input       ADC2_CLK_N,
     input       ADC2_CLK_P,
     input [6:0] ADC2_DATA_P,
@@ -92,6 +92,7 @@ module adc_capture_top(
 );
 
 wire I_Trig;
+wire trigger_en;
 wire Sys_clk;
 wire clk_200M;
 wire clk_10M;
@@ -126,7 +127,7 @@ I_Trig #(
    .NUM_DIV(400)
 )I_Trig_inst(
     .clk        (clk_200M   ),
-    .rst_n      (1          ),
+    .rst_n      (trigger_en ),
     .clk_div    (I_Trig     )
 );
 
@@ -164,6 +165,9 @@ ft60x_top u_ft60x_top(
     ,   .usb_data_req           (usb_data_req           )
     ,   .usb_fifo_almost_empty  (usb_fifo_almost_empty  )
     ,   .usb_burst_trigger      (usb_burst_trigger      )
+
+    //output trigger interface
+    ,   .trigger_en             (trigger_en             )
 
     //USB interface
     ,   .CLK_i                  (CLK_i              )

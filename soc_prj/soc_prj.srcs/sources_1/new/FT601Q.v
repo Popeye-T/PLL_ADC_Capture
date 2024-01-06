@@ -27,6 +27,9 @@ module ft60x_top(
     input                   usb_fifo_almost_empty,
     output reg              usb_burst_trigger,
 
+    //output trigger interface
+    output                  trigger_en,
+
     //USB interface
     input                  CLK_i,
     inout [31:0]           DATA_io,
@@ -131,6 +134,19 @@ always @(posedge CLK_i)begin
     end
 end
 
+// ila_1 ila_1_inst (
+// 	.clk    (CLK_i          ), // input wire clk
+// 	.probe0 (USB_S          ), // input wire [1:0]  probe0  
+// 	.probe1 (FIFO_Din       ) // input wire [0:0]  probe1
+// );
+
+trigger_ctrl  trigger_ctrl_inst (
+    .clk            (CLK_i      ),
+    .rst_n          (rstn       ),
+    .usb_wr_data    (FIFO_Din   ),
+    .usb_wr_en      (FIFO_WR    ),
+    .trigger_en     (trigger_en )
+);
 
 Delay_rst #(
     .num            (20'hffff0      )
