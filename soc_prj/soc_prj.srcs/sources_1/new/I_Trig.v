@@ -26,11 +26,11 @@ module I_Trig(
     output reg clk_div
 );
 parameter NUM_DIV = 200;
-reg [12:0]cnt;
+reg [15:0]cnt;
 
 always @(posedge clk or negedge rst_n)
 if(!rst_n) begin
-	cnt     <= 4'd0;
+	cnt     <= 0;
 	clk_div    <= 1'b0;
 end
 else if(cnt < NUM_DIV / 2 - 1) begin
@@ -38,7 +38,7 @@ else if(cnt < NUM_DIV / 2 - 1) begin
 	clk_div    <= clk_div;
 end
 else begin
-	cnt     <= 4'd0;
+	cnt     <= 0;
 	clk_div    <= ~clk_div;
 end
 endmodule

@@ -181,6 +181,7 @@ module axi_full_core#(
 //----------------------------------------------------
 // forward FIFO write interface
 	,	output  reg             fwr_en_pause
+
 //----------------------------------------------------
 // forward FIFO read interface
     ,   output  wire           	frd_en
@@ -200,12 +201,25 @@ module axi_full_core#(
 	reg		[15:0]		wr_burst_cnt;
 	reg					usb_burst_trigger_d1;
 	reg					usb_burst_trigger_d2;
+	reg 				frd_almost_full_d1;
+	reg 				frd_almost_full_d2;
+	reg 				trigger_en_d1;
+	reg 				trigger_en_d2;
 
 	always@(M_AXI_ACLK) begin
 		usb_burst_trigger_d1	<=	usb_burst_trigger;
 		usb_burst_trigger_d2	<=	usb_burst_trigger_d1;
 	end
 
+	always@(M_AXI_ACLK) begin
+		frd_almost_full_d1	<=	frd_almost_full;
+		frd_almost_full_d2	<=	frd_almost_full_d1;
+	end
+
+	always@(M_AXI_ACLK) begin
+		trigger_en_d1	<=	trigger_en;
+		trigger_en_d2	<=	trigger_en_d1;
+	end
 
 
 	// function called clogb2 that returns an integer which has the
@@ -330,7 +344,7 @@ module axi_full_core#(
 	assign TXN_DONE	= compare_done;
 	//Burst size in bytes
 	assign burst_size_bytes	= C_M_AXI_BURST_LEN * C_M_AXI_DATA_WIDTH / 8;
-	assign init_txn_pulse	= (!init_txn_ff2) && init_txn_ff;
+	assign init_txn_pulse	= (!trigger_en_d2) && trigger_en_d1;
 
 
 	//Generate a pulse to initiate AXI transaction.
@@ -768,7 +782,7 @@ module axi_full_core#(
 	//implement master command interface state machine                                                        
 
 	always @ ( posedge M_AXI_ACLK) begin                                                                                                     
-		if (M_AXI_ARESETN == 1'b0 ) begin                                                                                                 
+		if ((!M_AXI_ARESETN) || init_txn_pulse) begin                                                                                                 
 			// reset condition                                                                                  
 			// All the signals are assigned default values under reset condition                                
 			mst_exec_state      <= IDLE_W;                                                                
@@ -785,7 +799,7 @@ module axi_full_core#(
 			case (mst_exec_state)                                                                               
 																												
 				IDLE_W: begin
-					if(frd_almost_full) begin                                                            
+					if(frd_almost_full_d2) begin                                                            
 						mst_exec_state  <= INIT_WRITE;                                                              
 						ERROR <= 1'b0;
 						compare_done <= 1'b0;

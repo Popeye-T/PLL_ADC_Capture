@@ -124,7 +124,7 @@ clk_wiz_0 clk_wiz_0_inst(
 
 /*I_Trig输出差分信号，200M分成500kHz，400分频*/
 I_Trig #(
-   .NUM_DIV(2000)
+   .NUM_DIV(40000)
 )I_Trig_inst(
     .clk        (clk_200M   ),
     .rst_n      (trigger_en ),
