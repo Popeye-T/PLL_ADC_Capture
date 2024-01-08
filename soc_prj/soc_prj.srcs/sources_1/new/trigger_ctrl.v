@@ -20,10 +20,10 @@ always @(posedge clk or negedge rst_n)begin
         trigger_temp <= 0;
     end
     else if(usb_wr_en) begin
-        if(usb_wr_data[31:0] == 32'h0001)begin
+        if(usb_wr_data[31:0] == 32'h0000AB01)begin
             trigger_temp <= 1;
         end
-        else if(usb_wr_data[31:0] == 32'h0000)begin
+        else if(usb_wr_data[31:0] == 32'h0000AB00)begin
             trigger_temp <= 0;
         end
     end

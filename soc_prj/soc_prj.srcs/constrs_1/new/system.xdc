@@ -143,10 +143,10 @@ set_property IOSTANDARD BLVDS_25 [get_ports In_Trig_N]
 #set_property CLOCK_DEDICATED_ROUTE FALSE [get_nets In_Trig_N]
 
 
-set_property PACKAGE_PIN R5 [get_ports Out_Trig_P]
-set_property PACKAGE_PIN R4 [get_ports Out_Trig_N]
-set_property IOSTANDARD LVDS_25 [get_ports Out_Trig_N]
-set_property IOSTANDARD LVDS_25 [get_ports Out_Trig_P]
+# set_property PACKAGE_PIN R5 [get_ports Out_Trig_P]
+# set_property PACKAGE_PIN R4 [get_ports Out_Trig_N]
+# set_property IOSTANDARD LVDS_25 [get_ports Out_Trig_N]
+# set_property IOSTANDARD LVDS_25 [get_ports Out_Trig_P]
 
 
 

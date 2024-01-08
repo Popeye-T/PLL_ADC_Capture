@@ -21,6 +21,9 @@
 
 
 module ft60x_top(
+    //ila clk
+    input                   ila_clk,
+
     //FIFO interface     
     input [31:0]            usb_data_ch_1,
     output                  usb_data_req,
@@ -85,7 +88,15 @@ always @(posedge CLK_i)begin
     usb_fifo_almost_empty_d1 <= usb_fifo_almost_empty;
     usb_fifo_almost_empty_d2 <= usb_fifo_almost_empty_d1;
 end
+ila_0 u_ila_0 (
+	.clk    (ila_clk        ), // input wire clk
 
+	.probe0 (DATA_io[0+:16] ), // input wire [15:0]  probe0  
+	.probe1 (FIFO_RD        ), // input wire [0:0]  probe1 
+	.probe2 (USB_S          ), // input wire [1:0]  probe2
+	.probe3 (FIFO_Din       ), // input wire [31:0]  probe3 
+	.probe4 (FIFO_WR        ) // input wire [0:0]  probe4
+);
 
 always @(posedge CLK_i)begin
     if(!rstn)begin

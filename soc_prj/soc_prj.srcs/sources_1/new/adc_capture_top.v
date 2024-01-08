@@ -42,9 +42,9 @@ module adc_capture_top(
     input       In_Trig_P,
     input       In_Trig_N,
 
-    /*Output Trigger ports*/
-    output      Out_Trig_P,
-    output      Out_Trig_N,
+    // /*Output Trigger ports*/
+    // output      Out_Trig_P,
+    // output      Out_Trig_N,
 
    /*ADC1*/
     input       ADC1_CLK_N,
@@ -127,20 +127,20 @@ clk_wiz_0 clk_wiz_0_inst(
     .clk_in1(Sys_clk)      // input clk_in1
 );
 
-/*Out_Trig输出差分信号，200M分成500kHz，400分频*/
-Out_Trig #(
-   .NUM_DIV(40000)
-)Out_Trig_inst(
-    .clk        (clk_200M       ),
-    .rst_n      (trigger_en     ),
-    .clk_div    (Out_Trig       )
-);
+// /*Out_Trig输出差分信号，200M分成500kHz，400分频*/
+// Out_Trig #(
+//    .NUM_DIV(40000)
+// )Out_Trig_inst(
+//     .clk        (clk_200M       ),
+//     .rst_n      (trigger_en     ),
+//     .clk_div    (Out_Trig       )
+// );
 
-OBUFDS OBUFDS_inst(
-    .I          (Out_Trig       ),
-    .O          (Out_Trig_P     ),
-    .OB         (Out_Trig_N     )
-);
+// OBUFDS OBUFDS_inst(
+//     .I          (Out_Trig       ),
+//     .O          (Out_Trig_P     ),
+//     .OB         (Out_Trig_N     )
+// );
 
 /*In_Trig输入差分信号*/
 IBUFDS IBUFDS_inst (
@@ -165,15 +165,13 @@ adc_channel_ctrl u_adc_channel_1(
     ,   .adc_channel_clk        (adc_clk_ch_1           )
     ,   .adc_channel_data       (adc_data_ch_1          )
 );
-
-// ila_0 u_ila_0(
-// 	    .clk                    (adc_clk_ch_1           )  // input wire clk
-// 	,   .probe0                 (adc_data_ch_1          )  // input wire [13:0]  probe0  
-// );
           
 ft60x_top u_ft60x_top(
+    //ila clk
+        .ila_clk                (clk_200M               )
+
     // FIFO interface
-        .usb_data_ch_1          (usb_data_ch_1          )
+    ,   .usb_data_ch_1          (usb_data_ch_1          )
     ,   .usb_data_req           (usb_data_req           )
     ,   .usb_fifo_almost_empty  (usb_fifo_almost_empty  )
     ,   .usb_burst_trigger      (usb_burst_trigger      )

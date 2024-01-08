@@ -250,7 +250,7 @@ module axis2ddr_top#(
 //---------------------------------------------------
 // FORWARD FIFO STORAGE
 fifo_generator_1 u_forward_fifo (
-    .rst                (!trigger_en_d2         ),      // input wire rst
+    .rst                (fwr_en_pause_d2        ),      // input wire rst
     .wr_clk             (fwr_clk                ),      // input wire wr_clk
     .wr_en              (fwr_en                 ),      // input wire wr_en
     .din                (fwr_data               ),      // input wire [15 : 0] din
@@ -262,6 +262,12 @@ fifo_generator_1 u_forward_fifo (
     .empty              (),                             // output wire empty
     .wr_rst_busy        (),                             // output wire wr_rst_busy
     .rd_rst_busy        ()                              // output wire rd_rst_busy
+);
+
+ila_1 u_ila_1 (
+	.clk        (fwr_clk    ), // input wire clk
+	.probe0     (fwr_data   ), // input wire [15:0]  probe0  
+	.probe1     (fwr_en     ) // input wire [0:0]  probe1
 );
 
 //---------------------------------------------------
