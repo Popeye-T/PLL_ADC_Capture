@@ -38,9 +38,13 @@ module adc_capture_top(
     input       Sys_clk_P,
     input       Sys_clk_N,
 
-    /*Unknow ports*/
-    output      I_Trig_P,
-    output      I_Trig_N,
+    /*Input Trigger ports*/ 
+    input       In_Trig_P,
+    input       In_Trig_N,
+
+    /*Output Trigger ports*/
+    output      Out_Trig_P,
+    output      Out_Trig_N,
 
    /*ADC1*/
     input       ADC1_CLK_N,
@@ -91,7 +95,8 @@ module adc_capture_top(
     inout [3:0] ps_emio_tri_io
 );
 
-wire I_Trig;
+wire Out_Trig;
+wire In_Trig;
 wire trigger_en;
 wire Sys_clk;
 wire clk_200M;
@@ -122,19 +127,26 @@ clk_wiz_0 clk_wiz_0_inst(
     .clk_in1(Sys_clk)      // input clk_in1
 );
 
-/*I_Trig输出差分信号，200M分成500kHz，400分频*/
-I_Trig #(
+/*Out_Trig输出差分信号，200M分成500kHz，400分频*/
+Out_Trig #(
    .NUM_DIV(40000)
-)I_Trig_inst(
-    .clk        (clk_200M   ),
-    .rst_n      (trigger_en ),
-    .clk_div    (I_Trig     )
+)Out_Trig_inst(
+    .clk        (clk_200M       ),
+    .rst_n      (trigger_en     ),
+    .clk_div    (Out_Trig       )
 );
 
 OBUFDS OBUFDS_inst(
-    .I          (I_Trig     ),
-    .O          (I_Trig_P   ),
-    .OB         (I_Trig_N   )
+    .I          (Out_Trig       ),
+    .O          (Out_Trig_P     ),
+    .OB         (Out_Trig_N     )
+);
+
+/*In_Trig输入差分信号*/
+IBUFDS IBUFDS_inst (
+    .O          (In_Trig        ),  // 1-bit output: Buffer output
+    .I          (In_Trig_P      ),  // 1-bit input: Diff_p buffer input (connect directly to top-level port)
+    .IB         (In_Trig_N      )   // 1-bit input: Diff_n buffer input (connect directly to top-level port)
 );
 
 adc_channel_ctrl u_adc_channel_1(
@@ -154,10 +166,10 @@ adc_channel_ctrl u_adc_channel_1(
     ,   .adc_channel_data       (adc_data_ch_1          )
 );
 
-ila_0 u_ila_0(
-	    .clk                    (adc_clk_ch_1           )  // input wire clk
-	,   .probe0                 (adc_data_ch_1          )  // input wire [13:0]  probe0  
-);
+// ila_0 u_ila_0(
+// 	    .clk                    (adc_clk_ch_1           )  // input wire clk
+// 	,   .probe0                 (adc_data_ch_1          )  // input wire [13:0]  probe0  
+// );
           
 ft60x_top u_ft60x_top(
     // FIFO interface
@@ -166,7 +178,8 @@ ft60x_top u_ft60x_top(
     ,   .usb_fifo_almost_empty  (usb_fifo_almost_empty  )
     ,   .usb_burst_trigger      (usb_burst_trigger      )
 
-    //output trigger interface
+    //trigger interface
+    ,   .In_Trig                (In_Trig                )
     ,   .trigger_en             (trigger_en             )
 
     //USB interface

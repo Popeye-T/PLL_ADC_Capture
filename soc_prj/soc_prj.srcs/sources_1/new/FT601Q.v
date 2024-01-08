@@ -27,7 +27,8 @@ module ft60x_top(
     input                   usb_fifo_almost_empty,
     output reg              usb_burst_trigger,
 
-    //output trigger interface
+    //trigger interface
+    input                   In_Trig,
     output                  trigger_en,
 
     //USB interface
@@ -145,6 +146,7 @@ trigger_ctrl  trigger_ctrl_inst (
     .rst_n          (rstn       ),
     .usb_wr_data    (FIFO_Din   ),
     .usb_wr_en      (FIFO_WR    ),
+    .In_Trig        (In_Trig    ),
     .trigger_en     (trigger_en )
 );
 

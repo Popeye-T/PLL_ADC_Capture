@@ -20,7 +20,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 //检测到外正沿，Flag置1，标志开始传输USB信号
-module I_Trig(
+module Out_Trig(
     input clk,
     input rst_n,
     output reg clk_div

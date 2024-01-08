@@ -134,19 +134,19 @@ set_property PACKAGE_PIN A4 [get_ports {DATA_io[18]}]
 
 
 
-#set_property PACKAGE_PIN P6 [get_ports E_Trig_P]
-#set_property PACKAGE_PIN P5 [get_ports E_Trig_N]
-#set_property IOSTANDARD BLVDS_25 [get_ports E_Trig_P]
-#set_property IOSTANDARD BLVDS_25 [get_ports E_Trig_N]
+set_property PACKAGE_PIN P6 [get_ports In_Trig_P]
+set_property PACKAGE_PIN P5 [get_ports In_Trig_N]
+set_property IOSTANDARD BLVDS_25 [get_ports In_Trig_P]
+set_property IOSTANDARD BLVDS_25 [get_ports In_Trig_N]
 
-#set_property CLOCK_DEDICATED_ROUTE FALSE [get_nets E_Trig_N]
-#set_property CLOCK_DEDICATED_ROUTE FALSE [get_nets E_Trig_P]
+#set_property CLOCK_DEDICATED_ROUTE FALSE [get_nets In_Trig_P]
+#set_property CLOCK_DEDICATED_ROUTE FALSE [get_nets In_Trig_N]
 
 
-set_property PACKAGE_PIN R5 [get_ports I_Trig_P]
-set_property PACKAGE_PIN R4 [get_ports I_Trig_N]
-set_property IOSTANDARD LVDS_25 [get_ports I_Trig_N]
-set_property IOSTANDARD LVDS_25 [get_ports I_Trig_P]
+set_property PACKAGE_PIN R5 [get_ports Out_Trig_P]
+set_property PACKAGE_PIN R4 [get_ports Out_Trig_N]
+set_property IOSTANDARD LVDS_25 [get_ports Out_Trig_N]
+set_property IOSTANDARD LVDS_25 [get_ports Out_Trig_P]
 
 
 
