@@ -37,6 +37,12 @@ module adc_channel_ctrl(
     output [13:0]   adc_channel_data
 );
 
+ila_2 ila_2_inst (
+	.clk    (clk_200M           ), // input wire clk
+	.probe0 (adc_channel_data   ) // input wire [13:0] probe0
+);
+
+
 /*把CLK_P进行延时，进行时钟对齐，先加上，不一定会用得上*/
 wire [4:0] W_delay_cnt;
 wire ADC_CLK_in;

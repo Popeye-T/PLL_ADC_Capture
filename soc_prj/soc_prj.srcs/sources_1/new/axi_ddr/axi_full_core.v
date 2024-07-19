@@ -190,6 +190,7 @@ module axi_full_core#(
 
 //----------------------------------------------------
 // backward FIFO write interface
+	,   output  reg            	brd_is_not_empty
     ,   output  reg            	bwr_en
     ,   output  reg 	[127:0]	bwr_data
 
@@ -792,6 +793,7 @@ module axi_full_core#(
 			ERROR <= 1'b0;   
 			wr_burst_cnt	<=	0;
 			fwr_en_pause <= 0;
+			brd_is_not_empty <= 0;
 		end
 		else begin                                                                                                 
 																												
@@ -799,6 +801,7 @@ module axi_full_core#(
 			case (mst_exec_state)                                                                               
 																												
 				IDLE_W: begin
+					brd_is_not_empty <= 0;
 					if(frd_almost_full_d2) begin                                                            
 						mst_exec_state  <= INIT_WRITE;                                                              
 						ERROR <= 1'b0;
@@ -810,6 +813,7 @@ module axi_full_core#(
 				end
 
 				IDLE_R: begin
+					brd_is_not_empty <= 0;
 					if(usb_burst_trigger_d2) begin
 						mst_exec_state  <= INIT_READ;
 					end
@@ -850,7 +854,8 @@ module axi_full_core#(
 				// initiate a read transaction. Read transactions will be                                       
 				// issued until burst_read_active signal is asserted.                                           
 				// read controller                                                                              
-				if (reads_done) begin    
+				if (reads_done) begin
+					brd_is_not_empty <= 1;
 					wr_burst_cnt	<=	wr_burst_cnt + 1;
 					if(wr_burst_cnt >= USB_TOTAL_BURST_LENGTH / USB_SINGLE_BURST_LENGTH -1) begin
 						mst_exec_state <= IDLE_W;

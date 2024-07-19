@@ -222,6 +222,7 @@ module axis2ddr_top#(
     wire            brd_en              ;
     wire [31 : 0]   brd_data            ;
     wire            brd_almost_empty    ;
+    wire            brd_is_not_empty    ;
     
 	reg             trigger_en_d1       ;
 	reg             trigger_en_d2       ;
@@ -299,6 +300,7 @@ axi_full_core #(
 
 //----------------------------------------------------
 // backward FIFO write interface
+    ,   .brd_is_not_empty       (brd_is_not_empty       )
     ,   .bwr_en                 (bwr_en                 )
     ,   .bwr_data               (bwr_data               )
 
