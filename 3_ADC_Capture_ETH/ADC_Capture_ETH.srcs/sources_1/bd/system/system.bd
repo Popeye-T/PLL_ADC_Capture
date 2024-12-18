@@ -1,7 +1,7 @@
 {
   "design": {
     "design_info": {
-      "boundary_crc": "0x81397F2407691D8",
+      "boundary_crc": "0x81397F2D7C8B89C",
       "device": "xc7z015clg485-2",
       "gen_directory": "../../../../ADC_Capture_ETH.gen/sources_1/bd/system",
       "name": "system",
@@ -12,7 +12,7 @@
     },
     "design_tree": {
       "processing_system7_0": "",
-      "rst_250M": "",
+      "proc_sys_reset_0": "",
       "uiFDMA_0": "",
       "axi_mem_intercon": {
         "s00_couplers": {
@@ -313,7 +313,7 @@
         "direction": "O",
         "parameters": {
           "CLK_DOMAIN": {
-            "value": "system_processing_system7_0_0_FCLK_CLK0",
+            "value": "system_processing_system7_0_1_FCLK_CLK0",
             "value_src": "default_prop"
           },
           "FREQ_HZ": {
@@ -338,8 +338,8 @@
     "components": {
       "processing_system7_0": {
         "vlnv": "xilinx.com:ip:processing_system7:5.5",
-        "xci_name": "system_processing_system7_0_0",
-        "xci_path": "ip\\system_processing_system7_0_0\\system_processing_system7_0_0.xci",
+        "xci_name": "system_processing_system7_0_1",
+        "xci_path": "ip\\system_processing_system7_0_1\\system_processing_system7_0_1.xci",
         "inst_hier_path": "processing_system7_0",
         "parameters": {
           "PCW_ACT_APU_PERIPHERAL_FREQMHZ": {
@@ -1605,6 +1605,15 @@
           "PCW_S_AXI_HP0_ID_WIDTH": {
             "value": "6"
           },
+          "PCW_S_AXI_HP1_DATA_WIDTH": {
+            "value": "64"
+          },
+          "PCW_S_AXI_HP2_DATA_WIDTH": {
+            "value": "64"
+          },
+          "PCW_S_AXI_HP3_DATA_WIDTH": {
+            "value": "64"
+          },
           "PCW_TPIU_PERIPHERAL_CLKSRC": {
             "value": "External"
           },
@@ -1977,20 +1986,20 @@
           }
         }
       },
-      "rst_250M": {
+      "proc_sys_reset_0": {
         "vlnv": "xilinx.com:ip:proc_sys_reset:5.0",
-        "xci_name": "system_rst_ps7_0_100M_0",
-        "xci_path": "ip\\system_rst_ps7_0_100M_0\\system_rst_ps7_0_100M_0.xci",
-        "inst_hier_path": "rst_250M"
+        "xci_name": "system_proc_sys_reset_0_0",
+        "xci_path": "ip\\system_proc_sys_reset_0_0\\system_proc_sys_reset_0_0.xci",
+        "inst_hier_path": "proc_sys_reset_0"
       },
       "uiFDMA_0": {
         "vlnv": "xilinx.com:user:uiFDMA:3.1",
-        "xci_name": "system_uiFDMA_0_0",
-        "xci_path": "ip\\system_uiFDMA_0_0\\system_uiFDMA_0_0.xci",
+        "xci_name": "system_uiFDMA_0_1",
+        "xci_path": "ip\\system_uiFDMA_0_1\\system_uiFDMA_0_1.xci",
         "inst_hier_path": "uiFDMA_0",
         "parameters": {
-          "M_AXI_DATA_WIDTH": {
-            "value": "128"
+          "M_AXI_ID_WIDTH": {
+            "value": "0"
           }
         },
         "interface_ports": {
@@ -2016,9 +2025,9 @@
       },
       "axi_mem_intercon": {
         "vlnv": "xilinx.com:ip:axi_interconnect:2.1",
-        "xci_path": "ip\\system_axi_mem_intercon_0\\system_axi_mem_intercon_0.xci",
+        "xci_path": "ip\\system_axi_mem_intercon_1\\system_axi_mem_intercon_1.xci",
         "inst_hier_path": "axi_mem_intercon",
-        "xci_name": "system_axi_mem_intercon_0",
+        "xci_name": "system_axi_mem_intercon_1",
         "parameters": {
           "NUM_MI": {
             "value": "1"
@@ -2304,32 +2313,32 @@
       }
     },
     "nets": {
+      "proc_sys_reset_0_peripheral_aresetn1": {
+        "ports": [
+          "proc_sys_reset_0/peripheral_aresetn",
+          "fdma_rstn",
+          "uiFDMA_0/M_AXI_ARESETN",
+          "axi_mem_intercon/S00_ARESETN",
+          "axi_mem_intercon/M00_ARESETN",
+          "axi_mem_intercon/ARESETN"
+        ]
+      },
       "processing_system7_0_FCLK_CLK1": {
         "ports": [
           "processing_system7_0/FCLK_CLK0",
           "ui_clk",
-          "processing_system7_0/S_AXI_HP0_ACLK",
-          "rst_250M/slowest_sync_clk",
+          "proc_sys_reset_0/slowest_sync_clk",
           "uiFDMA_0/M_AXI_ACLK",
-          "axi_mem_intercon/ACLK",
           "axi_mem_intercon/S00_ACLK",
-          "axi_mem_intercon/M00_ACLK"
+          "processing_system7_0/S_AXI_HP0_ACLK",
+          "axi_mem_intercon/M00_ACLK",
+          "axi_mem_intercon/ACLK"
         ]
       },
       "processing_system7_0_FCLK_RESET0_N": {
         "ports": [
           "processing_system7_0/FCLK_RESET0_N",
-          "rst_250M/ext_reset_in"
-        ]
-      },
-      "rst_ps7_0_100M_peripheral_aresetn1": {
-        "ports": [
-          "rst_250M/peripheral_aresetn",
-          "fdma_rstn",
-          "uiFDMA_0/M_AXI_ARESETN",
-          "axi_mem_intercon/ARESETN",
-          "axi_mem_intercon/S00_ARESETN",
-          "axi_mem_intercon/M00_ARESETN"
+          "proc_sys_reset_0/ext_reset_in"
         ]
       }
     },

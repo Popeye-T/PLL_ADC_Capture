@@ -2,7 +2,7 @@
 //Copyright 2022-2023 Advanced Micro Devices, Inc. All Rights Reserved.
 //--------------------------------------------------------------------------------
 //Tool Version: Vivado v.2023.1 (win64) Build 3865809 Sun May  7 15:05:29 MDT 2023
-//Date        : Tue Dec 17 20:47:37 2024
+//Date        : Wed Dec 18 16:36:22 2024
 //Host        : DESKTOP-K54KI5V running 64-bit major release  (build 9200)
 //Command     : generate_target system.bd
 //Design      : system
@@ -490,7 +490,7 @@ module s00_couplers_imp_1P403ZT
         .s_axi_wvalid(auto_ds_to_auto_pc_WVALID));
 endmodule
 
-(* CORE_GENERATION_INFO = "system,IP_Integrator,{x_ipVendor=xilinx.com,x_ipLibrary=BlockDiagram,x_ipName=system,x_ipVersion=1.00.a,x_ipLanguage=VERILOG,numBlks=7,numReposBlks=5,numNonXlnxBlks=0,numHierBlks=2,maxHierDepth=0,numSysgenBlks=0,numHlsBlks=0,numHdlrefBlks=0,numPkgbdBlks=0,bdsource=USER,synth_mode=OOC_per_IP}" *) (* HW_HANDOFF = "system.hwdef" *) 
+(* CORE_GENERATION_INFO = "system,IP_Integrator,{x_ipVendor=xilinx.com,x_ipLibrary=BlockDiagram,x_ipName=system,x_ipVersion=1.00.a,x_ipLanguage=VERILOG,numBlks=7,numReposBlks=5,numNonXlnxBlks=0,numHierBlks=2,maxHierDepth=0,numSysgenBlks=0,numHlsBlks=0,numHdlrefBlks=0,numPkgbdBlks=0,bdsource=USER,da_axi4_cnt=1,da_board_cnt=2,da_clkrst_cnt=3,da_ps7_cnt=1,synth_mode=OOC_per_IP}" *) (* HW_HANDOFF = "system.hwdef" *) 
 module system
    (DDR_addr,
     DDR_ba,
@@ -568,10 +568,10 @@ module system
   (* X_INTERFACE_INFO = "xilinx.com:display_processing_system7:fixedio:1.0 FIXED_IO PS_PORB" *) inout FIXED_IO_ps_porb;
   (* X_INTERFACE_INFO = "xilinx.com:display_processing_system7:fixedio:1.0 FIXED_IO PS_SRSTB" *) inout FIXED_IO_ps_srstb;
   (* X_INTERFACE_INFO = "xilinx.com:signal:reset:1.0 RST.FDMA_RSTN RST" *) (* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME RST.FDMA_RSTN, INSERT_VIP 0, POLARITY ACTIVE_LOW" *) output [0:0]fdma_rstn;
-  (* X_INTERFACE_INFO = "xilinx.com:interface:gpio:1.0 ps_emio " *) input [3:0]ps_emio_tri_i;
-  (* X_INTERFACE_INFO = "xilinx.com:interface:gpio:1.0 ps_emio " *) output [3:0]ps_emio_tri_o;
-  (* X_INTERFACE_INFO = "xilinx.com:interface:gpio:1.0 ps_emio " *) output [3:0]ps_emio_tri_t;
-  (* X_INTERFACE_INFO = "xilinx.com:signal:clock:1.0 CLK.UI_CLK CLK" *) (* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME CLK.UI_CLK, CLK_DOMAIN system_processing_system7_0_0_FCLK_CLK0, FREQ_HZ 250000000, FREQ_TOLERANCE_HZ 0, INSERT_VIP 0, PHASE 0.0" *) output ui_clk;
+  (* X_INTERFACE_INFO = "xilinx.com:interface:gpio:1.0 ps_emio TRI_I" *) input [3:0]ps_emio_tri_i;
+  (* X_INTERFACE_INFO = "xilinx.com:interface:gpio:1.0 ps_emio TRI_O" *) output [3:0]ps_emio_tri_o;
+  (* X_INTERFACE_INFO = "xilinx.com:interface:gpio:1.0 ps_emio TRI_T" *) output [3:0]ps_emio_tri_t;
+  (* X_INTERFACE_INFO = "xilinx.com:signal:clock:1.0 CLK.UI_CLK CLK" *) (* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME CLK.UI_CLK, CLK_DOMAIN system_processing_system7_0_1_FCLK_CLK0, FREQ_HZ 250000000, FREQ_TOLERANCE_HZ 0, INSERT_VIP 0, PHASE 0.0" *) output ui_clk;
 
   wire [31:0]FDMA_S_0_1_fdma_raddr;
   wire FDMA_S_0_1_fdma_rareq;
@@ -620,6 +620,7 @@ module system
   wire axi_mem_intercon_M00_AXI_WREADY;
   wire [7:0]axi_mem_intercon_M00_AXI_WSTRB;
   wire axi_mem_intercon_M00_AXI_WVALID;
+  wire [0:0]proc_sys_reset_0_peripheral_aresetn1;
   wire [14:0]processing_system7_0_DDR_ADDR;
   wire [2:0]processing_system7_0_DDR_BA;
   wire processing_system7_0_DDR_CAS_N;
@@ -646,7 +647,6 @@ module system
   wire [3:0]processing_system7_0_GPIO_0_TRI_I;
   wire [3:0]processing_system7_0_GPIO_0_TRI_O;
   wire [3:0]processing_system7_0_GPIO_0_TRI_T;
-  wire [0:0]rst_ps7_0_100M_peripheral_aresetn1;
   wire [31:0]uiFDMA_0_M_AXI_ARADDR;
   wire [1:0]uiFDMA_0_M_AXI_ARBURST;
   wire [3:0]uiFDMA_0_M_AXI_ARCACHE;
@@ -699,16 +699,16 @@ module system
   assign FDMA_S_0_fdma_rvalid = FDMA_S_0_1_fdma_rvalid;
   assign FDMA_S_0_fdma_wbusy = FDMA_S_0_1_fdma_wbusy;
   assign FDMA_S_0_fdma_wvalid = FDMA_S_0_1_fdma_wvalid;
-  assign fdma_rstn[0] = rst_ps7_0_100M_peripheral_aresetn1;
+  assign fdma_rstn[0] = proc_sys_reset_0_peripheral_aresetn1;
   assign processing_system7_0_GPIO_0_TRI_I = ps_emio_tri_i[3:0];
   assign ps_emio_tri_o[3:0] = processing_system7_0_GPIO_0_TRI_O;
   assign ps_emio_tri_t[3:0] = processing_system7_0_GPIO_0_TRI_T;
   assign ui_clk = processing_system7_0_FCLK_CLK1;
-  system_axi_mem_intercon_0 axi_mem_intercon
+  system_axi_mem_intercon_1 axi_mem_intercon
        (.ACLK(processing_system7_0_FCLK_CLK1),
-        .ARESETN(rst_ps7_0_100M_peripheral_aresetn1),
+        .ARESETN(proc_sys_reset_0_peripheral_aresetn1),
         .M00_ACLK(processing_system7_0_FCLK_CLK1),
-        .M00_ARESETN(rst_ps7_0_100M_peripheral_aresetn1),
+        .M00_ARESETN(proc_sys_reset_0_peripheral_aresetn1),
         .M00_AXI_araddr(axi_mem_intercon_M00_AXI_ARADDR),
         .M00_AXI_arburst(axi_mem_intercon_M00_AXI_ARBURST),
         .M00_AXI_arcache(axi_mem_intercon_M00_AXI_ARCACHE),
@@ -743,7 +743,7 @@ module system
         .M00_AXI_wstrb(axi_mem_intercon_M00_AXI_WSTRB),
         .M00_AXI_wvalid(axi_mem_intercon_M00_AXI_WVALID),
         .S00_ACLK(processing_system7_0_FCLK_CLK1),
-        .S00_ARESETN(rst_ps7_0_100M_peripheral_aresetn1),
+        .S00_ARESETN(proc_sys_reset_0_peripheral_aresetn1),
         .S00_AXI_araddr(uiFDMA_0_M_AXI_ARADDR),
         .S00_AXI_arburst(uiFDMA_0_M_AXI_ARBURST),
         .S00_AXI_arcache(uiFDMA_0_M_AXI_ARCACHE),
@@ -781,7 +781,14 @@ module system
         .S00_AXI_wready(uiFDMA_0_M_AXI_WREADY),
         .S00_AXI_wstrb(uiFDMA_0_M_AXI_WSTRB),
         .S00_AXI_wvalid(uiFDMA_0_M_AXI_WVALID));
-  system_processing_system7_0_0 processing_system7_0
+  system_proc_sys_reset_0_0 proc_sys_reset_0
+       (.aux_reset_in(1'b1),
+        .dcm_locked(1'b1),
+        .ext_reset_in(processing_system7_0_FCLK_RESET0_N),
+        .mb_debug_sys_rst(1'b0),
+        .peripheral_aresetn(proc_sys_reset_0_peripheral_aresetn1),
+        .slowest_sync_clk(processing_system7_0_FCLK_CLK1));
+  system_processing_system7_0_1 processing_system7_0
        (.DDR_Addr(DDR_addr[14:0]),
         .DDR_BankAddr(DDR_ba[2:0]),
         .DDR_CAS_n(DDR_cas_n),
@@ -847,19 +854,12 @@ module system
         .S_AXI_HP0_WRISSUECAP1_EN(1'b0),
         .S_AXI_HP0_WSTRB(axi_mem_intercon_M00_AXI_WSTRB),
         .S_AXI_HP0_WVALID(axi_mem_intercon_M00_AXI_WVALID));
-  system_rst_ps7_0_100M_0 rst_250M
-       (.aux_reset_in(1'b1),
-        .dcm_locked(1'b1),
-        .ext_reset_in(processing_system7_0_FCLK_RESET0_N),
-        .mb_debug_sys_rst(1'b0),
-        .peripheral_aresetn(rst_ps7_0_100M_peripheral_aresetn1),
-        .slowest_sync_clk(processing_system7_0_FCLK_CLK1));
-  system_uiFDMA_0_0 uiFDMA_0
+  system_uiFDMA_0_1 uiFDMA_0
        (.M_AXI_ACLK(processing_system7_0_FCLK_CLK1),
         .M_AXI_ARADDR(uiFDMA_0_M_AXI_ARADDR),
         .M_AXI_ARBURST(uiFDMA_0_M_AXI_ARBURST),
         .M_AXI_ARCACHE(uiFDMA_0_M_AXI_ARCACHE),
-        .M_AXI_ARESETN(rst_ps7_0_100M_peripheral_aresetn1),
+        .M_AXI_ARESETN(proc_sys_reset_0_peripheral_aresetn1),
         .M_AXI_ARID(uiFDMA_0_M_AXI_ARID),
         .M_AXI_ARLEN(uiFDMA_0_M_AXI_ARLEN),
         .M_AXI_ARLOCK(uiFDMA_0_M_AXI_ARLOCK),
@@ -910,7 +910,7 @@ module system
         .fdma_wvalid(FDMA_S_0_1_fdma_wvalid));
 endmodule
 
-module system_axi_mem_intercon_0
+module system_axi_mem_intercon_1
    (ACLK,
     ARESETN,
     M00_ACLK,

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="ASCII"?>
+<sdkproject:SdkProject xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:sdkproject="http://www.xilinx.com/sdkproject" name="Hello_world" location="D:/workspace/PLL_ADC_Capture/3_ADC_Capture_ETH/vitis_prj/Hello_world" platform="D:/workspace/PLL_ADC_Capture/3_ADC_Capture_ETH/vitis_prj/ADC_Capture_ETH_top/export/ADC_Capture_ETH_top/ADC_Capture_ETH_top.xpfm" platformUID="xilinx:::0.0(custom)" systemProject="Hello_world_system" sysConfig="ADC_Capture_ETH_top" runtime="cpp" cpu="standalone_ps7_cortexa9_0" cpuInstance="ps7_cortexa9_0" os="standalone" mssSignature="b6029280f04e16fae0ec26a19e308a76">
+  <configuration name="Debug" id="xilinx.gnu.armv7.exe.debug.1172571467">
+    <configBuildOptions xsi:type="sdkproject:SdkOptions"/>
+    <lastBuildOptions xsi:type="sdkproject:SdkOptions"/>
+  </configuration>
+  <configuration name="Release" id="xilinx.gnu.armv7.exe.release.266429249" dirty="true">
+    <configBuildOptions xsi:type="sdkproject:SdkOptions"/>
+  </configuration>
+  <template appTemplateName="hello_world"/>
+</sdkproject:SdkProject>

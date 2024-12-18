@@ -2,7 +2,7 @@
 // Copyright 2022-2023 Advanced Micro Devices, Inc. All Rights Reserved.
 // --------------------------------------------------------------------------------
 // Tool Version: Vivado v.2023.1 (win64) Build 3865809 Sun May  7 15:05:29 MDT 2023
-// Date        : Tue Dec 17 20:48:27 2024
+// Date        : Tue Dec 17 21:46:27 2024
 // Host        : DESKTOP-K54KI5V running 64-bit major release  (build 9200)
 // Command     : write_verilog -force -mode funcsim
 //               d:/workspace/PLL_ADC_Capture/3_ADC_Capture_ETH/ADC_Capture_ETH.gen/sources_1/ip/clk_wiz_0/clk_wiz_0_sim_netlist.v
