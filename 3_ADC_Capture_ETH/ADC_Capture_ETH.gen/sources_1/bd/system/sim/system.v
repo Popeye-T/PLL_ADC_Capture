@@ -2,7 +2,7 @@
 //Copyright 2022-2023 Advanced Micro Devices, Inc. All Rights Reserved.
 //--------------------------------------------------------------------------------
 //Tool Version: Vivado v.2023.1 (win64) Build 3865809 Sun May  7 15:05:29 MDT 2023
-//Date        : Wed Dec 18 16:36:22 2024
+//Date        : Wed Dec 18 19:12:17 2024
 //Host        : DESKTOP-K54KI5V running 64-bit major release  (build 9200)
 //Command     : generate_target system.bd
 //Design      : system
@@ -571,7 +571,7 @@ module system
   (* X_INTERFACE_INFO = "xilinx.com:interface:gpio:1.0 ps_emio TRI_I" *) input [3:0]ps_emio_tri_i;
   (* X_INTERFACE_INFO = "xilinx.com:interface:gpio:1.0 ps_emio TRI_O" *) output [3:0]ps_emio_tri_o;
   (* X_INTERFACE_INFO = "xilinx.com:interface:gpio:1.0 ps_emio TRI_T" *) output [3:0]ps_emio_tri_t;
-  (* X_INTERFACE_INFO = "xilinx.com:signal:clock:1.0 CLK.UI_CLK CLK" *) (* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME CLK.UI_CLK, CLK_DOMAIN system_processing_system7_0_1_FCLK_CLK0, FREQ_HZ 250000000, FREQ_TOLERANCE_HZ 0, INSERT_VIP 0, PHASE 0.0" *) output ui_clk;
+  (* X_INTERFACE_INFO = "xilinx.com:signal:clock:1.0 CLK.UI_CLK CLK" *) (* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME CLK.UI_CLK, CLK_DOMAIN system_processing_system7_0_1_FCLK_CLK0, FREQ_HZ 100000000, FREQ_TOLERANCE_HZ 0, INSERT_VIP 0, PHASE 0.0" *) output ui_clk;
 
   wire [31:0]FDMA_S_0_1_fdma_raddr;
   wire FDMA_S_0_1_fdma_rareq;
@@ -853,7 +853,8 @@ module system
         .S_AXI_HP0_WREADY(axi_mem_intercon_M00_AXI_WREADY),
         .S_AXI_HP0_WRISSUECAP1_EN(1'b0),
         .S_AXI_HP0_WSTRB(axi_mem_intercon_M00_AXI_WSTRB),
-        .S_AXI_HP0_WVALID(axi_mem_intercon_M00_AXI_WVALID));
+        .S_AXI_HP0_WVALID(axi_mem_intercon_M00_AXI_WVALID),
+        .USB0_VBUS_PWRFAULT(1'b0));
   system_uiFDMA_0_1 uiFDMA_0
        (.M_AXI_ACLK(processing_system7_0_FCLK_CLK1),
         .M_AXI_ARADDR(uiFDMA_0_M_AXI_ARADDR),

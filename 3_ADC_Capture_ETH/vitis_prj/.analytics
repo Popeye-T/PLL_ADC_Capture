@@ -12,3 +12,45 @@ timestamp=[2024-12-18 16:44:22], mode=BUILD, duration=0:00:05.155, duration_ms=5
 timestamp=[2024-12-18 16:44:35], mode=BUILD, duration=0:00:11.415, duration_ms=11415, data={name=Hello_world_system, configuration=Debug, clean_build=false}
 timestamp=[2024-12-18 16:44:40], mode=BUILD, duration=0:00:00.593, duration_ms=593, data={name=Hello_world, configuration=Debug, clean_build=false}
 timestamp=[2024-12-18 16:44:52], mode=BUILD, duration=0:00:11.395, duration_ms=11395, data={name=Hello_world_system, configuration=Debug, clean_build=false}
+timestamp=[2024-12-18 18:10:41], mode=PLATFORM_REPOSITORY_INIT, duration=0:00:00.310, duration_ms=310, data={}
+timestamp=[2024-12-18 18:10:44], mode=WORKBENCH_START, duration=0:00:08.879, duration_ms=8879, data={}
+timestamp=[2024-12-18 18:10:44], mode=WORKBENCH_UI_INIT, duration=0:00:00.375, duration_ms=375, data={editors_count=2, platform_editors_count=0, projects_count=4, platform_projects_count=1, active_platform_editor=false, projects=ADC_Capture_ETH_top,Hello_world,Hello_world_system,RemoteSystemsTempFiles}
+timestamp=[2024-12-18 18:25:31], mode=PLATFORM_GENERATION, duration=0:00:58.455, duration_ms=58455, data={name=ADC_Capture_ETH_top}
+timestamp=[2024-12-18 18:25:38], mode=BUILD, duration=0:00:05.298, duration_ms=5298, data={name=Hello_world, configuration=Debug, clean_build=false}
+timestamp=[2024-12-18 18:25:56], mode=BUILD, duration=0:00:10.792, duration_ms=10792, data={name=Hello_world_system, configuration=Debug, clean_build=false}
+timestamp=[2024-12-18 18:37:38], mode=PLATFORM_GENERATION, duration=0:00:59.389, duration_ms=59389, data={name=ADC_Capture_ETH_top}
+timestamp=[2024-12-18 18:37:46], mode=BUILD, duration=0:00:05.385, duration_ms=5385, data={name=Hello_world, configuration=Debug, clean_build=false}
+timestamp=[2024-12-18 18:38:07], mode=BUILD, duration=0:00:11.196, duration_ms=11196, data={name=Hello_world_system, configuration=Debug, clean_build=false}
+timestamp=[2024-12-18 18:51:09], mode=PLATFORM_GENERATION, duration=0:00:58.238, duration_ms=58238, data={name=ADC_Capture_ETH_top}
+timestamp=[2024-12-18 18:51:18], mode=BUILD, duration=0:00:05.252, duration_ms=5252, data={name=Hello_world, configuration=Debug, clean_build=false}
+timestamp=[2024-12-18 18:51:37], mode=BUILD, duration=0:00:10.935, duration_ms=10935, data={name=Hello_world_system, configuration=Debug, clean_build=false}
+timestamp=[2024-12-18 19:18:17], mode=PLATFORM_GENERATION, duration=0:01:01.193, duration_ms=61193, data={name=ADC_Capture_ETH_top}
+timestamp=[2024-12-18 19:18:25], mode=BUILD, duration=0:00:05.243, duration_ms=5243, data={name=Hello_world, configuration=Debug, clean_build=false}
+timestamp=[2024-12-18 19:18:44], mode=BUILD, duration=0:00:10.859, duration_ms=10859, data={name=Hello_world_system, configuration=Debug, clean_build=false}
+timestamp=[2024-12-18 21:13:36], mode=PLATFORM_GENERATION, duration=0:00:59.221, duration_ms=59221, data={name=ADC_Capture_ETH_top}
+timestamp=[2024-12-18 21:13:43], mode=BUILD, duration=0:00:04.984, duration_ms=4984, data={name=Hello_world, configuration=Debug, clean_build=false}
+timestamp=[2024-12-18 21:14:00], mode=BUILD, duration=0:00:10.325, duration_ms=10325, data={name=Hello_world_system, configuration=Debug, clean_build=false}
+timestamp=[2024-12-18 21:31:10], mode=PLATFORM_GENERATION, duration=0:00:58.591, duration_ms=58591, data={name=ADC_Capture_ETH_top}
+timestamp=[2024-12-18 21:31:18], mode=BUILD, duration=0:00:04.975, duration_ms=4975, data={name=Hello_world, configuration=Debug, clean_build=false}
+timestamp=[2024-12-18 21:31:35], mode=BUILD, duration=0:00:10.384, duration_ms=10384, data={name=Hello_world_system, configuration=Debug, clean_build=false}
+timestamp=[2024-12-18 21:35:33], mode=PLATFORM_GENERATION, duration=0:00:58.464, duration_ms=58464, data={name=ADC_Capture_ETH_top}
+timestamp=[2024-12-18 21:35:41], mode=BUILD, duration=0:00:04.915, duration_ms=4915, data={name=Hello_world, configuration=Debug, clean_build=false}
+timestamp=[2024-12-18 21:35:58], mode=BUILD, duration=0:00:10.352, duration_ms=10352, data={name=Hello_world_system, configuration=Debug, clean_build=false}
+timestamp=[2024-12-19 09:53:47], mode=PLATFORM_REPOSITORY_INIT, duration=0:00:00.813, duration_ms=813, data={}
+timestamp=[2024-12-19 09:53:51], mode=WORKBENCH_START, duration=0:00:11.839, duration_ms=11839, data={}
+timestamp=[2024-12-19 09:53:51], mode=WORKBENCH_UI_INIT, duration=0:00:00.267, duration_ms=267, data={editors_count=2, platform_editors_count=0, projects_count=4, platform_projects_count=1, active_platform_editor=false, projects=ADC_Capture_ETH_top,Hello_world,Hello_world_system,RemoteSystemsTempFiles}
+timestamp=[2024-12-19 09:55:18], mode=PLATFORM_GENERATION, duration=0:00:59.847, duration_ms=59847, data={name=ADC_Capture_ETH_top}
+timestamp=[2024-12-19 09:55:26], mode=BUILD, duration=0:00:05.508, duration_ms=5508, data={name=Hello_world, configuration=Debug, clean_build=false}
+timestamp=[2024-12-19 09:55:44], mode=BUILD, duration=0:00:10.813, duration_ms=10813, data={name=Hello_world_system, configuration=Debug, clean_build=false}
+timestamp=[2024-12-19 10:06:00], mode=PLATFORM_GENERATION, duration=0:01:00.074, duration_ms=60074, data={name=ADC_Capture_ETH_top}
+timestamp=[2024-12-19 10:06:07], mode=BUILD, duration=0:00:04.987, duration_ms=4987, data={name=Hello_world, configuration=Debug, clean_build=false}
+timestamp=[2024-12-19 10:06:25], mode=BUILD, duration=0:00:10.529, duration_ms=10529, data={name=Hello_world_system, configuration=Debug, clean_build=false}
+timestamp=[2024-12-19 10:40:01], mode=PLATFORM_GENERATION, duration=0:01:00.663, duration_ms=60663, data={name=ADC_Capture_ETH_top}
+timestamp=[2024-12-19 10:40:08], mode=BUILD, duration=0:00:05.057, duration_ms=5057, data={name=Hello_world, configuration=Debug, clean_build=false}
+timestamp=[2024-12-19 10:40:26], mode=BUILD, duration=0:00:10.896, duration_ms=10896, data={name=Hello_world_system, configuration=Debug, clean_build=false}
+timestamp=[2024-12-19 10:50:17], mode=PLATFORM_GENERATION, duration=0:00:58.862, duration_ms=58862, data={name=ADC_Capture_ETH_top}
+timestamp=[2024-12-19 10:50:24], mode=BUILD, duration=0:00:04.856, duration_ms=4856, data={name=Hello_world, configuration=Debug, clean_build=false}
+timestamp=[2024-12-19 10:50:43], mode=BUILD, duration=0:00:10.636, duration_ms=10636, data={name=Hello_world_system, configuration=Debug, clean_build=false}
+timestamp=[2024-12-19 11:04:13], mode=PLATFORM_GENERATION, duration=0:00:57.681, duration_ms=57681, data={name=ADC_Capture_ETH_top}
+timestamp=[2024-12-19 11:04:20], mode=BUILD, duration=0:00:04.798, duration_ms=4798, data={name=Hello_world, configuration=Debug, clean_build=false}
+timestamp=[2024-12-19 11:04:37], mode=BUILD, duration=0:00:10.433, duration_ms=10433, data={name=Hello_world_system, configuration=Debug, clean_build=false}

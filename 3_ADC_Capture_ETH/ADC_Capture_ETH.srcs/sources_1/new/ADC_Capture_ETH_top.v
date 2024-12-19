@@ -175,9 +175,10 @@ system_wrapper u_system_wrapper(
 );
 
 
-fdma_test fdma_test_inst0
-(
-    .clk_200M       (clk_200M               ),
+adc_2_ddr_fdma adc_2_ddr_fdma_inst(
+    .adc_clk_in     (adc_clk_ch_1           ),
+    .adc_data_in    ({2'd0,adc_data_ch_1}   ),
+
     .ui_clk         (ui_clk                 ),
     .fdma_rstn      (fdma_rstn              ),
     .fdma_waddr     (FDMA_S_0_fdma_waddr    ),
@@ -195,5 +196,25 @@ fdma_test fdma_test_inst0
     .fdma_rvalid    (FDMA_S_0_fdma_rvalid   ),
     .fdma_rready    (FDMA_S_0_fdma_rready   )
 );
+
+// fdma_test fdma_test_inst0
+// (
+//     .ui_clk         (ui_clk                 ),
+//     .fdma_rstn      (fdma_rstn              ),
+//     .fdma_waddr     (FDMA_S_0_fdma_waddr    ),
+//     .fdma_wareq     (FDMA_S_0_fdma_wareq    ),
+//     .fdma_wsize     (FDMA_S_0_fdma_wsize    ),
+//     .fdma_wbusy     (FDMA_S_0_fdma_wbusy    ),
+//     .fdma_wdata     (FDMA_S_0_fdma_wdata    ),
+//     .fdma_wvalid    (FDMA_S_0_fdma_wvalid   ),
+//     .fdma_wready    (FDMA_S_0_fdma_wready   ),
+//     .fdma_raddr     (FDMA_S_0_fdma_raddr    ),
+//     .fdma_rareq     (FDMA_S_0_fdma_rareq    ),
+//     .fdma_rsize     (FDMA_S_0_fdma_rsize    ),
+//     .fdma_rbusy     (FDMA_S_0_fdma_rbusy    ),
+//     .fdma_rdata     (FDMA_S_0_fdma_rdata    ),
+//     .fdma_rvalid    (FDMA_S_0_fdma_rvalid   ),
+//     .fdma_rready    (FDMA_S_0_fdma_rready   )
+// );
 
 endmodule

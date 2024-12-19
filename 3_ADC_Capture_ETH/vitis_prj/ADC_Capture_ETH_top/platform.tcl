@@ -22,3 +22,30 @@ platform generate -quick
 platform generate
 platform config -updatehw {D:/workspace/PLL_ADC_Capture/3_ADC_Capture_ETH/ADC_Capture_ETH_top.xsa}
 platform generate -domains 
+platform active {ADC_Capture_ETH_top}
+platform config -updatehw {D:/workspace/PLL_ADC_Capture/3_ADC_Capture_ETH/ADC_Capture_ETH_top.xsa}
+platform generate -domains 
+platform config -updatehw {D:/workspace/PLL_ADC_Capture/3_ADC_Capture_ETH/ADC_Capture_ETH_top.xsa}
+platform generate -domains 
+platform config -updatehw {D:/workspace/PLL_ADC_Capture/3_ADC_Capture_ETH/ADC_Capture_ETH_top.xsa}
+platform generate -domains 
+platform config -updatehw {D:/workspace/PLL_ADC_Capture/3_ADC_Capture_ETH/ADC_Capture_ETH_top.xsa}
+platform config -updatehw {D:/workspace/PLL_ADC_Capture/3_ADC_Capture_ETH/ADC_Capture_ETH_top.xsa}
+platform generate -domains 
+platform config -updatehw {D:/workspace/PLL_ADC_Capture/3_ADC_Capture_ETH/ADC_Capture_ETH_top.xsa}
+platform generate -domains 
+platform config -updatehw {D:/workspace/PLL_ADC_Capture/3_ADC_Capture_ETH/ADC_Capture_ETH_top.xsa}
+platform generate -domains 
+platform config -updatehw {D:/workspace/PLL_ADC_Capture/3_ADC_Capture_ETH/ADC_Capture_ETH_top.xsa}
+platform generate -domains 
+platform active {ADC_Capture_ETH_top}
+platform config -updatehw {D:/workspace/PLL_ADC_Capture/3_ADC_Capture_ETH/ADC_Capture_ETH_top.xsa}
+platform generate -domains 
+platform config -updatehw {D:/workspace/PLL_ADC_Capture/3_ADC_Capture_ETH/ADC_Capture_ETH_top.xsa}
+platform generate -domains 
+platform config -updatehw {D:/workspace/PLL_ADC_Capture/3_ADC_Capture_ETH/ADC_Capture_ETH_top.xsa}
+platform generate -domains 
+platform config -updatehw {D:/workspace/PLL_ADC_Capture/3_ADC_Capture_ETH/ADC_Capture_ETH_top.xsa}
+platform generate -domains 
+platform config -updatehw {D:/workspace/PLL_ADC_Capture/3_ADC_Capture_ETH/ADC_Capture_ETH_top.xsa}
+platform generate -domains 
