@@ -29,3 +29,30 @@ bsp reload
 domain active {standalone_ps7_cortexa9_0}
 bsp reload
 platform generate -domains 
+platform active {system_wrapper}
+platform config -updatehw {D:/workspace/PLL_ADC_Capture/3_AXI_Full_2_DDR_ETH/system_wrapper.xsa}
+platform generate -domains 
+platform generate -domains 
+platform config -updatehw {D:/workspace/PLL_ADC_Capture/3_AXI_Full_2_DDR_ETH/system_wrapper.xsa}
+platform generate -domains 
+domain active {zynq_fsbl}
+bsp reload
+domain active {standalone_ps7_cortexa9_0}
+bsp reload
+platform config -updatehw {D:/workspace/PLL_ADC_Capture/3_AXI_Full_2_DDR_ETH/system_wrapper.xsa}
+platform generate -domains 
+platform config -updatehw {D:/workspace/PLL_ADC_Capture/3_AXI_Full_2_DDR_ETH/system_wrapper.xsa}
+platform generate -domains 
+platform config -updatehw {D:/workspace/PLL_ADC_Capture/3_AXI_Full_2_DDR_ETH/system_wrapper.xsa}
+platform generate -domains 
+platform active {system_wrapper}
+platform config -updatehw {D:/workspace/PLL_ADC_Capture/3_AXI_Full_2_DDR_ETH/system_wrapper.xsa}
+platform generate -domains 
+platform active {system_wrapper}
+platform config -updatehw {D:/workspace/PLL_ADC_Capture/3_AXI_Full_2_DDR_ETH/system_wrapper.xsa}
+platform generate -domains standalone_ps7_cortexa9_0 
+platform active {system_wrapper}
+platform config -updatehw {D:/workspace/PLL_ADC_Capture/3_AXI_Full_2_DDR_ETH/system_wrapper.xsa}
+platform generate -domains 
+platform clean
+platform generate

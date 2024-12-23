@@ -1,23 +1,21 @@
 
 `timescale 1 ns / 1 ps
 
-	module master_axi_full_v1_0 #
-	(
-		// Users to add parameters here
-		parameter			BURST_TIMES					=	'd1000		,
+module master_axi_full_v1_0 #(
+	// Users to add parameters here
+	parameter			BURST_TIMES					=	'd1000			,
 
-		parameter			C_M_TARGET_SLAVE_BASE_ADDR	=	32'h40000000,
-		parameter	integer	C_M_AXI_BURST_LEN			=	256			,
-		parameter	integer	C_M_AXI_ID_WIDTH			=	1			,
-		parameter	integer	C_M_AXI_ADDR_WIDTH			=	32			,
-		parameter	integer	C_M_AXI_DATA_WIDTH			=	128			,
-		parameter	integer	C_M_AXI_AWUSER_WIDTH		=	0			,
-		parameter	integer	C_M_AXI_ARUSER_WIDTH		=	0			,
-		parameter	integer	C_M_AXI_WUSER_WIDTH			=	0			,
-		parameter	integer	C_M_AXI_RUSER_WIDTH			=	0			,
-		parameter	integer	C_M_AXI_BUSER_WIDTH			=	0
-	)
-	(
+	parameter			C_M_TARGET_SLAVE_BASE_ADDR	=	32'h40000000	,
+	parameter	integer	C_M_AXI_BURST_LEN			=	256				,
+	parameter	integer	C_M_AXI_ID_WIDTH			=	1				,
+	parameter	integer	C_M_AXI_ADDR_WIDTH			=	32				,
+	parameter	integer	C_M_AXI_DATA_WIDTH			=	128				,
+	parameter	integer	C_M_AXI_AWUSER_WIDTH		=	0				,
+	parameter	integer	C_M_AXI_ARUSER_WIDTH		=	0				,
+	parameter	integer	C_M_AXI_WUSER_WIDTH			=	0				,
+	parameter	integer	C_M_AXI_RUSER_WIDTH			=	0				,
+	parameter	integer	C_M_AXI_BUSER_WIDTH			=	0
+)(
 	//user define
 	input	wire	[127:0]							data_trans			,
 	input	wire									data_trans_signal	,
@@ -74,11 +72,6 @@
 	input	wire									M_AXI_RVALID		,
 	output	wire									M_AXI_RREADY
 );
-
-
-
-
-
 
 //Î»¿í¼ÆËãº¯Êý
 function integer clogb2 (input integer bit_depth);
