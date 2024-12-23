@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="ASCII"?>
+<sdkproject:SdkProject xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:sdkproject="http://www.xilinx.com/sdkproject" name="eth" location="D:/workspace/ADC_Cap/3_AXI_Full_2_DDR_ETH/vitis/eth" platform="D:/workspace/ADC_Cap/3_AXI_Full_2_DDR_ETH/vitis/system_wrapper_1/export/system_wrapper_1/system_wrapper_1.xpfm" platformUID="xilinx:::0.0(custom)" systemProject="eth_system" sysConfig="system_wrapper_1" runtime="cpp" cpu="standalone_ps7_cortexa9_0" cpuInstance="ps7_cortexa9_0" os="standalone" mssSignature="3746b36961e0f5e53c1fcf1022d6385b">
+  <configuration name="Debug" id="xilinx.gnu.armv7.exe.debug.810100168">
+    <configBuildOptions xsi:type="sdkproject:SdkOptions"/>
+    <lastBuildOptions xsi:type="sdkproject:SdkOptions"/>
+  </configuration>
+  <configuration name="Release" id="xilinx.gnu.armv7.exe.release.180558572" dirty="true">
+    <configBuildOptions xsi:type="sdkproject:SdkOptions"/>
+  </configuration>
+  <template appTemplateName="lwip_echo_server" hasBspSettings="true"/>
+</sdkproject:SdkProject>

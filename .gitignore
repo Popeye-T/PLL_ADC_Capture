@@ -96,8 +96,6 @@
 */*/bd/*/ip/*/*.xml
 */*/*/bd/*/ip/*/*.xml
 
-*.c
-*.h
 *.vho
 *.html
 */*/bd/*/ip/*/*.tcl
